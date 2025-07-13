@@ -5,64 +5,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Side Projects</title>
-    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        tailwind.config = { darkMode: 'class' }
     </script>
 </head>
 
 <body
-    class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-8 transition-colors duration-300">
+    class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 relative pb-16">
     <!-- Dark Mode Toggle -->
-    <div class="fixed top-4 right-4">
+    <div class="fixed top-4 right-4 z-10">
         <button id="theme-toggle" aria-label="Toggle Dark Mode"
-            class="p-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300">
-            🌙
-        </button>
+            class="p-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300">🌙</button>
     </div>
 
-    <header class="max-w-4xl mx-auto mb-8 text-center">
-        <h1 class="text-4xl font-bold mb-2">My Projects</h1>
+    <header class="max-w-4xl mx-auto mt-8 mb-8 text-center">
+        <h1 class="text-4xl font-bold mb-2">My Side Projects</h1>
         <p class="text-lg text-gray-600 dark:text-gray-400">A collection of my recent work and experiments</p>
     </header>
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- GameList Project -->
+    <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
+        <!-- GameList -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
             <div>
                 <h2 class="text-xl font-semibold mb-2">GameList</h2>
                 <p class="text-gray-700 dark:text-gray-300 mb-4">A gamified todo list.</p>
             </div>
-            <div class="mt-auto flex space-x-2">
+            <div class="flex space-x-2">
                 <a href="https://gamelist.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
                 <a href="https://github.com/Wlczak/gamelist" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>
         </div>
-
-        <!-- Buffet Project -->
+        <!-- Buffet -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
             <div>
                 <h2 class="text-xl font-semibold mb-2">Buffet</h2>
                 <p class="text-gray-700 dark:text-gray-300 mb-4">A food preordering system for fast food and food
-                    stands.
-                </p>
+                    stands.</p>
             </div>
-            <div class="mt-auto flex space-x-2">
+            <div class="flex space-x-2">
                 <a href="https://buffet.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
                 <a href="https://github.com/Web-Projekty/buffet-rezervace" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>
         </div>
-
-        <!-- Tanks Project -->
+        <!-- Tanks -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
             <div>
@@ -70,54 +62,46 @@
                 <p class="text-gray-700 dark:text-gray-300 mb-4">TankTrouble inspired game with multiplayer coming soon.
                 </p>
             </div>
-            <div class="mt-auto flex space-x-2">
+            <div class="flex space-x-2">
                 <a href="https://tanks.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
                 <a href="https://github.com/Wlczak/go-tanks" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>
         </div>
-
-        <!-- Blogfinity Project -->
+        <!-- Blogfinity -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
             <div>
                 <h2 class="text-xl font-semibold mb-2">Blogfinity</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">A never-ending supply of low quiality AI generated
+                <p class="text-gray-700 dark:text-gray-300 mb-4">A never-ending supply of low quality AI generated
                     articles.</p>
             </div>
-            <div class="mt-auto flex space-x-2">
+            <div class="flex space-x-2">
                 <a href="https://blogfinity.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
                 <a href="https://github.com/Wlczak/blogfinity" target="_blank"
-                    class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="fixed bottom-0 left-0 w-full bg-gray-200 dark:bg-gray-800 text-center p-4">
+        <p class="text-sm text-gray-700 dark:text-gray-300">Status: <a href="https://status.vlastas.cc" target="_blank"
+                class="underline">status.vlastas.cc</a></p>
+        <p class="text-sm text-gray-700 dark:text-gray-300">© 2025 Adam Vlček. All rights reserved.</p>
+    </footer>
+
     <script>
         const toggleBtn = document.getElementById('theme-toggle');
         const root = document.documentElement;
-
-        // Initialize theme from localStorage
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            root.classList.add('dark');
-            toggleBtn.textContent = '☀️';
-        } else {
-            root.classList.remove('dark');
-            toggleBtn.textContent = '🌙';
-        }
-
+            root.classList.add('dark'); toggleBtn.textContent = '☀️'
+        } else { root.classList.remove('dark'); toggleBtn.textContent = '🌙' }
         toggleBtn.addEventListener('click', () => {
-            if (root.classList.contains('dark')) {
-                root.classList.remove('dark');
-                localStorage.theme = 'light';
-                toggleBtn.textContent = '🌙';
-            } else {
-                root.classList.add('dark');
-                localStorage.theme = 'dark';
-                toggleBtn.textContent = '☀️';
-            }
+            if (root.classList.contains('dark')) { root.classList.remove('dark'); localStorage.theme = 'light'; toggleBtn.textContent = '🌙' }
+            else { root.classList.add('dark'); localStorage.theme = 'dark'; toggleBtn.textContent = '☀️' }
         });
     </script>
 </body>

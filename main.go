@@ -31,6 +31,10 @@ func main() {
 		c.HTML(http.StatusOK, "index.tmpl", nil)
 	})
 
+	r.GET("/assets/*filepath", func(c *gin.Context) {
+		c.File("./assets/" + c.Param("filepath"))
+	})
+
 	// Listen and Server in 0.0.0.0:8080
 	err := r.Run(":8080")
 

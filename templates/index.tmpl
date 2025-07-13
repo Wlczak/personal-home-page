@@ -1,14 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Side Projects</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
 
-<body>
-    hello there
+<body
+    class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-8 transition-colors duration-300">
+    <!-- Dark Mode Toggle -->
+    <div class="fixed top-4 right-4">
+        <button id="theme-toggle" aria-label="Toggle Dark Mode"
+            class="p-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300">
+            🌙
+        </button>
+    </div>
+
+    <header class="max-w-4xl mx-auto mb-8 text-center">
+        <h1 class="text-4xl font-bold mb-2">My Side Projects</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">A collection of my latest work and experiments</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Project Card 1 -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
+            <div>
+                <h2 class="text-xl font-semibold mb-2">Weather App</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Real-time weather with geolocation and charts</p>
+            </div>
+            <a href="#"
+                class="mt-auto inline-block text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">View
+                Project</a>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
+            <div>
+                <h2 class="text-xl font-semibold mb-2">Task Manager</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Organize and track your daily tasks</p>
+            </div>
+            <a href="#"
+                class="mt-auto inline-block text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">View
+                Project</a>
+        </div>
+
+        <!-- Project Card 3 -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
+            <div>
+                <h2 class="text-xl font-semibold mb-2">Chatbot Interface</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Conversational UI with AI integration</p>
+            </div>
+            <a href="#"
+                class="mt-auto inline-block text-center px-4 py-2 border border-transparent rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">View
+                Project</a>
+        </div>
+    </main>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        // Initialize theme from localStorage
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            root.classList.add('dark');
+            toggleBtn.textContent = '☀️';
+        } else {
+            root.classList.remove('dark');
+            toggleBtn.textContent = '🌙';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            if (root.classList.contains('dark')) {
+                root.classList.remove('dark');
+                localStorage.theme = 'light';
+                toggleBtn.textContent = '🌙';
+            } else {
+                root.classList.add('dark');
+                localStorage.theme = 'dark';
+                toggleBtn.textContent = '☀️';
+            }
+        });
+    </script>
 </body>
 
 </html>

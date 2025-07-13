@@ -1,0 +1,10 @@
+services:
+    personal-homepage:
+        image: golang:1.24.5-alpine3.22
+        volumes:
+            - ./:/app
+        working_dir: /app
+        restart: always
+        ports:
+            - "1234:8080"
+        command: go run .

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +29,9 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", nil)
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"Year": time.Now().Year(),
+		})
 	})
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {

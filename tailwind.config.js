@@ -1,5 +1,5 @@
 module.exports = {
-    content: ["./templates/*.tmpl", "./templates/**/*.html"],
+    content: ["./templates/**/*.{tmpl,html}"],
     darkMode: "class",
     theme: { extend: {} },
     plugins: [],

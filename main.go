@@ -19,18 +19,21 @@ func main() {
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusNotFound, "error", gin.H{
 			"error": "Page not found",
+			"Title": "Error - 404",
 		})
 	})
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		c.HTML(http.StatusInternalServerError, "error", gin.H{
 			"error": err,
+			"Title": "Error - 500",
 		})
 	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index", gin.H{
-			"Year": time.Now().Year(),
+			"Year":  time.Now().Year(),
+			"Title": "My Projects",
 		})
 	})
 

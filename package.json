@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "build": "tailwindcss -c ./tailwind.config.js -i ./style-config.css -o ./assets/styles-compiled.css --minify",
+    "dev": "tailwindcss -c ./tailwind.config.js -i ./style-config.css -o ./assets/styles-compiled.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.11"
+  }
+}

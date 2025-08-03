@@ -1,22 +1,21 @@
 {{ define "footer" }}
 <!-- Footer -->
-    <footer class="fixed bottom-0 left-0 w-full bg-gray-200 dark:bg-gray-800 text-center p-4">
-        <p class="text-sm text-gray-700 dark:text-gray-300">Status: <a
-                href="https://shokuin.vlastas.cc/status/vlastascorp" target="_blank"
-                class="underline">status.vlastas.cc/status</a></p>
-        <p class="text-sm text-gray-700 dark:text-gray-300">© {{.Year}} Adam Vlček. All rights reserved.
-        </p>
-    </footer>
+<footer class="fixed bottom-0 left-0 w-full bg-gray-200 dark:bg-gray-800 text-center p-4">
+    <p class="text-sm text-gray-700 dark:text-gray-300">Status: <a href="https://shokuin.vlastas.cc/status/vlastascorp"
+            target="_blank" class="underline">status.vlastas.cc/status</a></p>
+    <p class="text-sm text-gray-700 dark:text-gray-300">© {{.Year}} Adam Vlček. All rights reserved.
+    </p>
+</footer>
 
-    <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const root = document.documentElement;
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            root.classList.add('dark'); toggleBtn.textContent = '☀️'
-        } else { root.classList.remove('dark'); toggleBtn.textContent = '🌙' }
-        toggleBtn.addEventListener('click', () => {
-            if (root.classList.contains('dark')) { root.classList.remove('dark'); localStorage.theme = 'light'; toggleBtn.textContent = '🌙' }
-            else { root.classList.add('dark'); localStorage.theme = 'dark'; toggleBtn.textContent = '☀️' }
-        });
-    </script>
+<script>
+    const toggleBtn = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.classList.add('dark'); toggleBtn.textContent = '☀️'
+    } else { root.classList.remove('dark'); toggleBtn.textContent = '🌙' }
+    toggleBtn.addEventListener('click', () => {
+        if (root.classList.contains('dark')) { root.classList.remove('dark'); localStorage.theme = 'light'; toggleBtn.textContent = '🌙' }
+        else { root.classList.add('dark'); localStorage.theme = 'dark'; toggleBtn.textContent = '☀️' }
+    });
+</script>
 {{ end }}

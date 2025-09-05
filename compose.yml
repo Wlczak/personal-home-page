@@ -3,7 +3,7 @@ services:
         image: wlczak/personal-home-page:latest
         labels:
             - com.centurylinklabs.watchtower.enable=true
-        volumes:
+        # volumes:
             # - ./:/app For local development
         working_dir: /app
         restart: always

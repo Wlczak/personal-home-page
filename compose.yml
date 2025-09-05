@@ -1,10 +1,10 @@
 services:
     personal-homepage:
-        image: golang:1.25.0-alpine3.22
+        image: wlczak/personal-home-page:latest
         volumes:
-            - ./:/app
+            # - ./:/app For local development
         working_dir: /app
         restart: always
         ports:
             - "1234:8080"
-        command: go run .
+        command: ./PHP

@@ -1,6 +1,8 @@
 services:
     personal-homepage:
         image: wlczak/personal-home-page:latest
+        labels:
+            - com.centurylinklabs.watchtower.enable=true
         volumes:
             # - ./:/app For local development
         working_dir: /app

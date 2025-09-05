@@ -4,7 +4,7 @@ services:
         labels:
             - com.centurylinklabs.watchtower.enable=true
         # volumes:
-            # - ./:/app For local development
+        # - ./:/app For local development
         working_dir: /app
         restart: always
         ports:

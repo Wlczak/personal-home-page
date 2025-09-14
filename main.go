@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ikeikeikeike/go-sitemap-generator/v2/stm"
 )
 
 func main() {
@@ -41,10 +42,27 @@ func main() {
 		c.File("./assets/" + c.Param("filepath"))
 	})
 
+	r.GET("/sitemap.xml", renderSitemap)
+
 	// Listen and Server in 0.0.0.0:8080
 	err := r.Run(":8080")
 
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func renderSitemap(c *gin.Context) {
+	stmap := stm.NewSitemap(1)
+	stmap.Create()
+	stmap.SetDefaultHost("https://wlczak.vlastas.cc/")
+	stmap.Add(stm.URL{
+		{"loc", "/"},
+		{"priority", "1.0"},
+		{"changefreq", "monthly"},
+	})
+
+	xml := stmap.XMLContent()
+	c.Header("Content-Type", "application/xml")
+	c.String(http.StatusOK, fmt.Sprintf("%s", xml))
 }

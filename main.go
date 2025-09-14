@@ -64,5 +64,5 @@ func renderSitemap(c *gin.Context) {
 
 	xml := stmap.XMLContent()
 	c.Header("Content-Type", "application/xml")
-	c.String(http.StatusOK, fmt.Sprintf("%s", xml))
+	c.String(http.StatusOK, string(xml))
 }

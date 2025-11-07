@@ -42,17 +42,17 @@ func main() {
 
 		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
 		if len(cookies) == 0 {
-			ping(true, time.Now())
+			go ping(true, time.Now())
 		} else {
 			cookie := cookies[0]
 			timeStr := cookie.Value
 			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
 			if err != nil {
-				ping(false, time.UnixMilli(0))
+				go ping(false, time.UnixMilli(0))
 				return
 			}
 			timeObj := time.UnixMilli(timeInt)
-			ping(false, timeObj)
+			go ping(false, timeObj)
 		}
 
 		c.HTML(http.StatusOK, "index", gin.H{
@@ -91,7 +91,13 @@ func renderSitemap(c *gin.Context) {
 }
 
 type WebHookRequest struct {
-	Content string `json:"content"`
+	Embeds  []WebHookEmbed `json:"embeds"`
+	Content string         `json:"content"`
+}
+type WebHookEmbed struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Color       string `json:"color"`
 }
 
 func ping(new bool, t time.Time) {
@@ -108,7 +114,13 @@ func ping(new bool, t time.Time) {
 
 	if new {
 		request = WebHookRequest{
-			Content: "New user visited at " + t.Format("15:04:05"),
+			Embeds: []WebHookEmbed{
+				{
+					Title:       "New User",
+					Description: "New user visited at " + t.Format("15:04:05"),
+					Color:       "16753920",
+				},
+			},
 		}
 	} else {
 		tDiff := time.Since(t)
@@ -123,11 +135,22 @@ func ping(new bool, t time.Time) {
 			timeString = fmt.Sprintf("%d seconds", int(tDiff.Seconds()))
 		}
 		request = WebHookRequest{
-			Content: fmt.Sprintf("User revisited after %s", timeString),
+			Embeds: []WebHookEmbed{
+				{
+					Title:       "Revisit",
+					Description: fmt.Sprintf("User revisited after %s", timeString),
+					Color:       "5814783",
+				},
+			},
+			// Content: fmt.Sprintf("User revisited after %s", timeString),
 		}
+		postWebhook(request)
 	}
 
-	json, err := json.Marshal(request)
+}
+
+func postWebhook(request WebHookRequest) {
+	json, _ := json.Marshal(request)
 	body := bytes.NewReader(json)
 	http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)
 }

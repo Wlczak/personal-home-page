@@ -135,15 +135,14 @@ func ping(new bool, t time.Time) {
 	var request WebHookRequest
 
 	if new {
-		request = WebHookRequest{
-			Embeds: []WebHookEmbed{
-				{
-					Title:       "New User",
-					Description: "New user visited at " + t.Format("15:04:05"),
-					Color:       "16753920",
-				},
+		request.Embeds = []WebHookEmbed{
+			{
+				Title:       "New User",
+				Description: "New user visited at " + t.Format("15:04:05"),
+				Color:       "16753920",
 			},
 		}
+
 	} else {
 		tDiff := time.Since(t)
 		var timeString string
@@ -177,7 +176,14 @@ func postWebhook(request WebHookRequest) {
 		fmt.Println(err)
 	}
 
-	json, _ := json.Marshal(request)
+	json, err := json.Marshal(request)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	body := bytes.NewReader(json)
-	http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)
+	_, err = http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

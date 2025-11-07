@@ -44,10 +44,22 @@ func main() {
 			"error": err,
 			"Title": "Error - 500",
 		})
+		color, colorErr := strconv.ParseInt("c70417", 16, 64)
+		if colorErr != nil {
+			color = 16753920
+		}
+		go postWebhook(WebHookRequest{
+			Embeds: []WebHookEmbed{
+				{
+					Title:       "Someone broke something",
+					Description: fmt.Sprintf("Some rascal broke something and it resulted in %v", err),
+					Color:       strconv.FormatInt(color, 10),
+				},
+			},
+		})
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-
 		cookies := c.Request.CookiesNamed("lastvisited")
 
 		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)

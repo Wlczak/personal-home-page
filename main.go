@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -60,21 +61,23 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		cookies := c.Request.CookiesNamed("lastvisited")
+		if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
+			cookies := c.Request.CookiesNamed("lastvisited")
 
-		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
-		if len(cookies) == 0 {
-			go ping(true, time.Now())
-		} else {
-			cookie := cookies[0]
-			timeStr := cookie.Value
-			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
-			if err != nil {
-				go ping(false, time.UnixMilli(0))
-				return
+			c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
+			if len(cookies) == 0 {
+				go ping(true, time.Now())
+			} else {
+				cookie := cookies[0]
+				timeStr := cookie.Value
+				timeInt, err := strconv.ParseInt(timeStr, 10, 64)
+				if err != nil {
+					go ping(false, time.UnixMilli(0))
+					return
+				}
+				timeObj := time.UnixMilli(timeInt)
+				go ping(false, timeObj)
 			}
-			timeObj := time.UnixMilli(timeInt)
-			go ping(false, timeObj)
 		}
 
 		c.HTML(http.StatusOK, "index", gin.H{

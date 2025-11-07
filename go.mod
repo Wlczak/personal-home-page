@@ -5,6 +5,7 @@ go 1.25.3
 require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/ikeikeikeike/go-sitemap-generator/v2 v2.0.2
+	github.com/joho/godotenv v1.5.1
 )
 
 require (

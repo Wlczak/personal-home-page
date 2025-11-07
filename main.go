@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ikeikeikeike/go-sitemap-generator/v2/stm"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -32,6 +37,24 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
+
+		cookies := c.Request.CookiesNamed("lastvisited")
+
+		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
+		if len(cookies) == 0 {
+			ping(true, time.Now())
+		} else {
+			cookie := cookies[0]
+			timeStr := cookie.Value
+			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
+			if err != nil {
+				ping(false, time.UnixMilli(0))
+				return
+			}
+			timeObj := time.UnixMilli(timeInt)
+			ping(false, timeObj)
+		}
+
 		c.HTML(http.StatusOK, "index", gin.H{
 			"Year":  time.Now().Year(),
 			"Title": "My Projects",
@@ -65,4 +88,46 @@ func renderSitemap(c *gin.Context) {
 	xml := stmap.XMLContent()
 	c.Header("Content-Type", "application/xml")
 	c.String(http.StatusOK, string(xml))
+}
+
+type WebHookRequest struct {
+	Content string `json:"content"`
+}
+
+func ping(new bool, t time.Time) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		err := godotenv.Load("./conf/.env")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	var request WebHookRequest
+
+	if new {
+		request = WebHookRequest{
+			Content: "New user visited at " + t.Format("15:04:05"),
+		}
+	} else {
+		tDiff := time.Since(t)
+		var timeString string
+		if tDiff.Hours() > 24 {
+			timeString = fmt.Sprintf("%d days %d hours %d minutes %d seconds", int(tDiff.Hours()/24), int(tDiff.Hours())%24, int(tDiff.Minutes())%60, int(tDiff.Seconds())%60)
+		} else if tDiff.Hours() > 1 {
+			timeString = fmt.Sprintf("%d hours %d minutes %d seconds", int(tDiff.Hours()), int(tDiff.Minutes())%60, int(tDiff.Seconds())%60)
+		} else if tDiff.Minutes() > 1 {
+			timeString = fmt.Sprintf("%d minutes %d seconds", int(tDiff.Minutes()), int(tDiff.Seconds())%60)
+		} else {
+			timeString = fmt.Sprintf("%d seconds", int(tDiff.Seconds()))
+		}
+		request = WebHookRequest{
+			Content: fmt.Sprintf("User revisited after %s", timeString),
+		}
+	}
+
+	json, err := json.Marshal(request)
+	body := bytes.NewReader(json)
+	http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)
 }

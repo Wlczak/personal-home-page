@@ -173,7 +173,11 @@ func ping(new bool, t time.Time) {
 func postWebhook(request WebHookRequest) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println(err)
+		err := godotenv.Load("./conf/.env")
+
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	json, err := json.Marshal(request)

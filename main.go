@@ -27,6 +27,16 @@ func main() {
 			"error": "Page not found",
 			"Title": "Error - 404",
 		})
+
+		go postWebhook(WebHookRequest{
+			Embeds: []WebHookEmbed{
+				{
+					Title:       "A lost lamb",
+					Description: "Someone got lost at " + c.Request.URL.Path,
+					Color:       "1561516",
+				},
+			},
+		})
 	})
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
@@ -88,6 +98,15 @@ func renderSitemap(c *gin.Context) {
 	xml := stmap.XMLContent()
 	c.Header("Content-Type", "application/xml")
 	c.String(http.StatusOK, string(xml))
+	go postWebhook(WebHookRequest{
+		Embeds: []WebHookEmbed{
+			{
+				Title:       "Sitemap generated",
+				Description: "Someone requested sitemap.xml",
+				Color:       "1561516",
+			},
+		},
+	})
 }
 
 type WebHookRequest struct {
@@ -101,15 +120,6 @@ type WebHookEmbed struct {
 }
 
 func ping(new bool, t time.Time) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		err := godotenv.Load("./conf/.env")
-
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-
 	var request WebHookRequest
 
 	if new {
@@ -150,6 +160,11 @@ func ping(new bool, t time.Time) {
 }
 
 func postWebhook(request WebHookRequest) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	json, _ := json.Marshal(request)
 	body := bytes.NewReader(json)
 	http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)

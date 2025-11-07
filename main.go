@@ -142,7 +142,7 @@ func ping(new bool, t time.Time) {
 				Color:       "16753920",
 			},
 		}
-
+		go postWebhook(request)
 	} else {
 		tDiff := time.Since(t)
 		var timeString string

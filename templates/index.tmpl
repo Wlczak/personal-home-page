@@ -22,23 +22,27 @@
         <!-- Buffet -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
+            <div class="flex flex-col justify-between">
                 <h2 class="text-xl font-semibold mb-2">{{ $project.Name }}</h2>
                 <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $project.Description }}</p>
                 {{ if $project.TechStack }}
                 <div class="my-2 h-px w-full bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Tech stack: {{ $project.TechStack }}</p>
-                {{ end }}
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">Tech stack: {{ $project.TechStack }}</p>
 
             </div>
-            <div class="flex space-x-2">
+            {{ end }}
+            <div class="flex space-x-2 mt-4">
                 <a href="{{ $project.ProjectLink }}" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">{{ if $project.VisitButtonText }}
-                    {{ $project.VisitButtonText }} {{ else }} Visit {{ end }}</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">
+                    {{ if $project.VisitButtonText }}{{ $project.VisitButtonText }}{{ else }}Visit{{ end }}
+                </a>
                 <a href="{{ $project.GitHub }}" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">
+                    GitHub
+                </a>
             </div>
         </div>
+
         {{ end }}
     </main>
     {{template "footer"}}

@@ -27,8 +27,8 @@
                 <p class="text-gray-700 dark:text-gray-300 mb-4">{{ $project.Description }}</p>
             </div>
             <div class="flex space-x-2">
-                <a href="{{ $project.Website }}" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
+                <a href="{{ $project.ProjectLink }}" target="_blank"
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">{{ if $project.VisitButtonText }} {{ $project.VisitButtonText }} {{ else }} Visit {{ end }}</a>
                 <a href="{{ $project.GitHub }}" target="_blank"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>

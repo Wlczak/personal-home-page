@@ -19,18 +19,20 @@
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {{ range $key, $project := .Projects }}
-        <!-- Buffet -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div class="flex flex-col justify-between">
-                <h2 class="text-xl font-semibold mb-2">{{ $project.Name }}</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $project.Description }}</p>
+        <!-- {{ $project.Name }} -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col transition-colors duration-300">
+            <div class="flex flex-col flex-1 justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">{{ $project.Name }}</h2>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $project.Description }}</p>
+                </div>
                 {{ if $project.TechStack }}
-                <div class="my-2 h-px w-full bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">Tech stack: {{ $project.TechStack }}</p>
-
+                <div>
+                    <div class="my-2 h-px w-full bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Tech stack: {{ $project.TechStack }}</p>
+                </div>
+                {{ end }}
             </div>
-            {{ end }}
             <div class="flex space-x-2 mt-4">
                 <a href="{{ $project.ProjectLink }}" target="_blank"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">
@@ -42,6 +44,7 @@
                 </a>
             </div>
         </div>
+
 
         {{ end }}
     </main>

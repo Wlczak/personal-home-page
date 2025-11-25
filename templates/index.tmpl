@@ -18,96 +18,22 @@
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+        {{ range $key, $project := .Projects }}
         <!-- Buffet -->
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
             <div>
-                <h2 class="text-xl font-semibold mb-2">Buffet</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">A food preordering system for fast food and food
-                    stands.</p>
+                <h2 class="text-xl font-semibold mb-2">{{ $project.Name }}</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">{{ $project.Description }}</p>
             </div>
             <div class="flex space-x-2">
-                <a href="https://hetzner.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/Web-Projekty/buffet-rezervace" target="_blank"
+                <a href="{{ $project.ProjectLink }}" target="_blank"
+                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">{{ if $project.VisitButtonText }} {{ $project.VisitButtonText }} {{ else }} Visit {{ end }}</a>
+                <a href="{{ $project.GitHub }}" target="_blank"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
             </div>
         </div>
-        <!-- LyLink -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
-                <h2 class="text-xl font-semibold mb-2">LyLink</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">A multiplatform lyrics tracker that allows you to sync
-                    your lyrics live with the music you're listening to.</p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="https://lylink.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/wlczak/LyLink" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
-            </div>
-        </div>
-        <!-- JShort -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
-                <h2 class="text-xl font-semibold mb-2">JShort</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">Simple url shortnener app written in Java spring boot.
-                </p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="https://jshort.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/Wlczak/jshort" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
-            </div>
-        </div>
-        <!-- Tanks -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
-                <h2 class="text-xl font-semibold mb-2">Tanks</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">TankTrouble inspired game with full multiplayer implementation coming
-                    someday.
-                </p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="https://tanks.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/Wlczak/go-tanks" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
-            </div>
-        </div>
-        <!-- Blogfinity -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
-                <h2 class="text-xl font-semibold mb-2">Blogfinity</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">A never-ending supply of low quality AI generated
-                    articles.</p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="https://blogfinity.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/Wlczak/blogfinity" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
-            </div>
-        </div>
-        <!-- GameList -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between transition-colors duration-300">
-            <div>
-                <h2 class="text-xl font-semibold mb-2">GameList</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">A gamified todo list.</p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="https://gamelist.vlastas.cc/" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700">Visit</a>
-                <a href="https://github.com/Wlczak/gamelist" target="_blank"
-                    class="flex-1 text-center px-4 py-2 rounded-md font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">GitHub</a>
-            </div>
-        </div>
+        {{ end }}
     </main>
     {{template "footer"}}
 </body>

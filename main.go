@@ -80,9 +80,12 @@ func main() {
 			}
 		}
 
+		projects := getProjects()
+
 		c.HTML(http.StatusOK, "index", gin.H{
-			"Year":  time.Now().Year(),
-			"Title": "My Projects",
+			"Year":     time.Now().Year(),
+			"Title":    "My Projects",
+			"Projects": projects,
 		})
 	})
 

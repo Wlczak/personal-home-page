@@ -6,6 +6,7 @@ type Project struct {
 	ProjectLink     string
 	GitHub          string
 	VisitButtonText string
+	TechStack       string
 }
 
 func getProjects() []Project {

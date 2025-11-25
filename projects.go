@@ -12,7 +12,7 @@ func getProjects() []Project {
 		{
 			Name:        "Buffet",
 			Description: "A food preordering system for fast food and food stands.",
-			Website:     "https://hetzner.vlastas.cc/",
+			Website:     "https://buffet.vlastas.cc/",
 			GitHub:      "https://github.com/Web-Projekty/buffet-rezervace",
 		},
 		{

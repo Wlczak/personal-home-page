@@ -36,6 +36,9 @@
             <div class="flex space-x-2 mt-4">
                 {{ if $project.VisitButton.Link }}
                 <a href="{{ if $project.VisitButton.Disabled }}#{{ else }}{{ $project.VisitButton.Link }}{{ end }}"
+                    target="{{ if $project.VisitButton.Disabled }}_self{{ else }}_blank{{ end }}"
+                    rel="{{ if $project.VisitButton.Disabled }}noopener{{ else }}noopener noreferrer{{ end }}"
+                    title="{{ if $project.VisitButton.Title }}{{ $project.VisitButton.Title }}{{ end }}"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium transition {{ if $project.VisitButton.Disabled }}opacity-50 cursor-not-allowed pointer-events-none bg-gray-300 text-gray-600 dark:bg-gray-600 dark:text-gray-400{{ else }}bg-blue-600 text-white hover:bg-blue-700{{ end }}"
                     {{ if $project.VisitButton.Disabled }}aria-disabled="true" tabindex="-1" {{ end }}>
                     {{ if $project.VisitButton.Text }}{{ $project.VisitButton.Text }}{{ else }}Visit{{ end }}
@@ -46,14 +49,13 @@
                 <a href="{{ if $project.GitHubButton.Disabled }}#{{ else }}{{ $project.GitHubButton.Link }}{{ end }}"
                     target="{{ if $project.GitHubButton.Disabled }}_self{{ else }}_blank{{ end }}"
                     rel="{{ if $project.GitHubButton.Disabled }}noopener{{ else }}noopener noreferrer{{ end }}"
+                    title="{{ if $project.GitHubButton.Title }}{{ $project.GitHubButton.Title }}{{ end }}"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium transition {{ if $project.GitHubButton.Disabled }}opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 text-gray-500 dark:bg-gray-600 dark:text-gray-400{{ else }}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600{{ end }}"
                     {{ if $project.GitHubButton.Disabled }}aria-disabled="true" tabindex="-1" {{ end }}>
                     {{ if $project.GitHubButton.Text }}{{ $project.GitHubButton.Text }}{{ else }}GitHub{{ end }}
                 </a>
                 {{ end }}
             </div>
-
-
         </div>
 
 

@@ -4,6 +4,7 @@ type Button struct {
 	Text     string
 	Disabled bool
 	Link     string
+	Title    string
 }
 
 type Project struct {
@@ -53,11 +54,10 @@ func getProjects() []Project {
 		{
 			Name:        "Menu",
 			Description: "Modular menu library designed for I2C LCD displays. (Tested on 16x2 and 20x4 displays)",
-			VisitButton: Button{
-				Link: "",
-			},
 			GitHubButton: Button{
-				Link: "https://github.com/Wlczak/Menu",
+				Link:     "https://github.com/Wlczak/Menu",
+				Disabled: true,
+				Text:     "Preparing for individual release",
 			},
 			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
 		},

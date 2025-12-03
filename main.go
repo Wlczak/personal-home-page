@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"os"
 	"strconv"
@@ -90,6 +91,34 @@ func main() {
 	})
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {
+		c.Header("Cache-Control", "max-age=14400")
+		finfo, err := fs.Stat(os.DirFS("./assets/"), c.Param("filepath"))
+		if err != nil {
+			c.Status(http.StatusNotFound)
+			go postWebhook(WebHookRequest{
+				Embeds: []WebHookEmbed{
+					{
+						Title:       "A little thief",
+						Description: "Someone tried to sneek away with some files from: " + c.Request.URL.Path,
+						Color:       "7016727",
+					},
+				},
+			})
+			return
+		}
+		if finfo.IsDir() {
+			c.Status(http.StatusNotFound)
+			go postWebhook(WebHookRequest{
+				Embeds: []WebHookEmbed{
+					{
+						Title:       "A little thief",
+						Description: "Someone tried to sneek away with some files from: " + c.Request.URL.Path,
+						Color:       "7016727",
+					},
+				},
+			})
+			return
+		}
 		c.File("./assets/" + c.Param("filepath"))
 	})
 

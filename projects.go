@@ -77,6 +77,7 @@ func getProjects() []Project {
 			Description: "tankTrouble inspired game with full multiplayer implementation coming someday.",
 			VisitButton: Button{
 				Link: "https://tanks.vlastas.cc/",
+				Text: "Play",
 			},
 			GitHubButton: Button{
 				Link: "https://github.com/Wlczak/go-tanks",

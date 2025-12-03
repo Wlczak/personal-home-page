@@ -92,7 +92,9 @@ func main() {
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {
 		c.Header("Cache-Control", "max-age=86400")
-		finfo, err := fs.Stat(os.DirFS("./assets/"), c.Param("filepath"))
+		filePath := strings.TrimPrefix(c.Param("filepath"), "/")
+		finfo, err := fs.Stat(os.DirFS("./assets"), filePath)
+		fmt.Println(err)
 		if err != nil {
 			c.Status(http.StatusNotFound)
 			go postWebhook(WebHookRequest{

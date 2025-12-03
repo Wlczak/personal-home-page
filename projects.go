@@ -1,22 +1,32 @@
 package main
 
 type Project struct {
-	Name            string
-	Description     string
-	ProjectLink     string
-	GitHub          string
-	VisitButtonText string
-	TechStack       string
+	Name                string
+	Description         string
+	ProjectLink         string
+	GitHub              string
+	GitHubDisabled      bool
+	VisitButtonText     string
+	VisitButtonDisabled bool
+	TechStack           string
 }
 
 func getProjects() []Project {
 	return []Project{
 		{
-			Name:        "Buffet",
-			Description: "A food preordering system for fast food and food stands.",
-			ProjectLink: "https://buffet.vlastas.cc/",
-			GitHub:      "https://github.com/Web-Projekty/buffet-rezervace",
-			TechStack:   "PHP, MariaDB, WebSockets",
+			Name:                "Buffet",
+			Description:         "A food preordering system for fast food and food stands.",
+			ProjectLink:         "https://buffet.vlastas.cc/",
+			GitHub:              "https://github.com/Web-Projekty/buffet-rezervace",
+			TechStack:           "PHP, MariaDB, WebSockets",
+			VisitButtonDisabled: true,
+		},
+		{
+			Name:        "LyLink",
+			Description: "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
+			ProjectLink: "https://lylink.vlastas.cc/",
+			GitHub:      "https://github.com/wlczak/LyLink",
+			TechStack:   "PHP, TypeScript, Twig, Sqlite",
 		},
 		{
 			Name:            "2D platformer",
@@ -27,18 +37,17 @@ func getProjects() []Project {
 			TechStack:       "Java, Java Swing",
 		},
 		{
+			Name:        "Menu",
+			Description: "Modular menu library designed for I2C LCD displays. (Tested on 16x2 and 20x4 displays)",
+			GitHub:      "https://github.com/Wlczak/jshort",
+			TechStack:   "Java, Spring Boot, Sqlite",
+		},
+		{
 			Name:        "JShort",
 			Description: "Simple url shortnener app written in Java spring boot.",
 			ProjectLink: "https://jshort.vlastas.cc/",
 			GitHub:      "https://github.com/Wlczak/jshort",
 			TechStack:   "Java, Spring Boot, Sqlite",
-		},
-		{
-			Name:        "LyLink",
-			Description: "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
-			ProjectLink: "https://lylink.vlastas.cc/",
-			GitHub:      "https://github.com/wlczak/LyLink",
-			TechStack:   "PHP, TypeScript, Twig, Sqlite",
 		},
 		{
 			Name:        "Tanks",

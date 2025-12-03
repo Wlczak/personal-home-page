@@ -1,74 +1,140 @@
 package main
 
+type Button struct {
+	Text     string
+	Disabled bool
+	Link     string
+}
+
 type Project struct {
-	Name                string
-	Description         string
-	ProjectLink         string
-	GitHub              string
-	GitHubDisabled      bool
-	VisitButtonText     string
-	VisitButtonDisabled bool
-	TechStack           string
+	Name         string
+	Description  string
+	VisitButton  Button
+	GitHubButton Button
+	TechStack    string
 }
 
 func getProjects() []Project {
 	return []Project{
 		{
-			Name:                "Buffet",
-			Description:         "A food preordering system for fast food and food stands.",
-			ProjectLink:         "https://buffet.vlastas.cc/",
-			GitHub:              "https://github.com/Web-Projekty/buffet-rezervace",
-			TechStack:           "PHP, MariaDB, WebSockets",
-			VisitButtonDisabled: true,
+			Name:        "Buffet",
+			Description: "A food preordering system for fast food and food stands.",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: true,
+				Link:     "https://buffet.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Web-Projekty/buffet-rezervace",
+			},
+			TechStack: "PHP, MariaDB, WebSockets",
 		},
 		{
 			Name:        "LyLink",
 			Description: "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
-			ProjectLink: "https://lylink.vlastas.cc/",
-			GitHub:      "https://github.com/wlczak/LyLink",
-			TechStack:   "PHP, TypeScript, Twig, Sqlite",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: false,
+				Link:     "https://lylink.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/wlczak/LyLink",
+			},
+			TechStack: "PHP, TypeScript, Twig, Sqlite",
 		},
 		{
-			Name:            "2D platformer",
-			Description:     "A 2D platformer game made with Java swing.",
-			ProjectLink:     "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
-			GitHub:          "https://github.com/Web-projekty/vap-projekt",
-			VisitButtonText: "Download",
-			TechStack:       "Java, Java Swing",
+			Name:        "2D platformer",
+			Description: "A 2D platformer game made with Java swing.",
+			VisitButton: Button{
+				Text:     "Download",
+				Disabled: false,
+				Link:     "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Web-projekty/vap-projekt",
+			},
+			TechStack: "Java, Java Swing",
 		},
 		{
 			Name:        "Menu",
 			Description: "Modular menu library designed for I2C LCD displays. (Tested on 16x2 and 20x4 displays)",
-			GitHub:      "https://github.com/Wlczak/jshort",
-			TechStack:   "Java, Spring Boot, Sqlite",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: true,
+				Link:     "",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Wlczak/jshort",
+			},
+			TechStack: "Java, Spring Boot, Sqlite",
 		},
 		{
 			Name:        "JShort",
 			Description: "Simple url shortnener app written in Java spring boot.",
-			ProjectLink: "https://jshort.vlastas.cc/",
-			GitHub:      "https://github.com/Wlczak/jshort",
-			TechStack:   "Java, Spring Boot, Sqlite",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: false,
+				Link:     "https://jshort.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Wlczak/jshort",
+			},
+			TechStack: "Java, Spring Boot, Sqlite",
 		},
 		{
 			Name:        "Tanks",
 			Description: "TankTrouble inspired game with full multiplayer implementation coming someday.",
-			ProjectLink: "https://tanks.vlastas.cc/",
-			GitHub:      "https://github.com/Wlczak/go-tanks",
-			TechStack:   "Go, TypeScript, WebSockets",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: false,
+				Link:     "https://tanks.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Wlczak/go-tanks",
+			},
+			TechStack: "Go, TypeScript, WebSockets",
 		},
 		{
 			Name:        "Blogfinity",
 			Description: "A never-ending supply of low quality AI generated articles.",
-			ProjectLink: "https://blogfinity.vlastas.cc/",
-			GitHub:      "https://github.com/Wlczak/blogfinity",
-			TechStack:   "Go, WebSockets, Sqlite, JavaScript",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: false,
+				Link:     "https://blogfinity.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Wlczak/blogfinity",
+			},
+			TechStack: "Go, WebSockets, Sqlite, JavaScript",
 		},
 		{
 			Name:        "GameList",
 			Description: "A gamified todo list.",
-			ProjectLink: "https://gamelist.vlastas.cc/",
-			GitHub:      "https://github.com/Wlczak/gamelist",
-			TechStack:   "PHP, JavaScript, MariaDB",
+			VisitButton: Button{
+				Text:     "Visit",
+				Disabled: false,
+				Link:     "https://gamelist.vlastas.cc/",
+			},
+			GitHubButton: Button{
+				Text:     "GitHub",
+				Disabled: false,
+				Link:     "https://github.com/Wlczak/gamelist",
+			},
+			TechStack: "PHP, JavaScript, MariaDB",
 		},
 	}
 }

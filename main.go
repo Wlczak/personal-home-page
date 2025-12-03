@@ -91,7 +91,7 @@ func main() {
 	})
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {
-		c.Header("Cache-Control", "max-age=14400")
+		c.Header("Cache-Control", "max-age=86400")
 		finfo, err := fs.Stat(os.DirFS("./assets/"), c.Param("filepath"))
 		if err != nil {
 			c.Status(http.StatusNotFound)

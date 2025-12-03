@@ -63,7 +63,7 @@ func getProjects() []Project {
 				Text: "GitHub",
 				Link: "https://github.com/Wlczak/Menu",
 			},
-			TechStack: "Java, Spring Boot, Sqlite",
+			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
 		},
 		{
 			Name:        "JShort",

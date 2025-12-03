@@ -6,7 +6,7 @@ COPY ./ /app
 
 RUN rm -fr node_modules
 
-RUN go build -o PHP . && chmod +x PHP
+RUN go build -ldflags "-s -w" -o PHP . && chmod +x PHP
 
 FROM alpine:latest
 

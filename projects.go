@@ -23,7 +23,6 @@ func getProjects() []Project {
 				Link: "https://buffet.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Web-Projekty/buffet-rezervace",
 			},
 			TechStack: "PHP, MariaDB, WebSockets",
@@ -35,7 +34,6 @@ func getProjects() []Project {
 				Link: "https://lylink.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/wlczak/LyLink",
 			},
 			TechStack: "PHP, TypeScript, Twig, Sqlite",
@@ -48,7 +46,6 @@ func getProjects() []Project {
 				Link: "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Web-projekty/vap-projekt",
 			},
 			TechStack: "Java, Java Swing",
@@ -60,7 +57,6 @@ func getProjects() []Project {
 				Link: "",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Wlczak/Menu",
 			},
 			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
@@ -72,7 +68,6 @@ func getProjects() []Project {
 				Link: "https://jshort.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Wlczak/jshort",
 			},
 			TechStack: "Java, Spring Boot, Sqlite",
@@ -84,7 +79,6 @@ func getProjects() []Project {
 				Link: "https://tanks.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Wlczak/go-tanks",
 			},
 			TechStack: "Go, TypeScript, WebSockets",
@@ -96,7 +90,6 @@ func getProjects() []Project {
 				Link: "https://blogfinity.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Wlczak/blogfinity",
 			},
 			TechStack: "Go, WebSockets, Sqlite, JavaScript",
@@ -108,7 +101,6 @@ func getProjects() []Project {
 				Link: "https://gamelist.vlastas.cc/",
 			},
 			GitHubButton: Button{
-				Text: "GitHub",
 				Link: "https://github.com/Wlczak/gamelist",
 			},
 			TechStack: "PHP, JavaScript, MariaDB",

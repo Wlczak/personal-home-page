@@ -62,6 +62,17 @@ func getProjects() []Project {
 			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
 		},
 		{
+			Name:        "LyLink-jellyfin",
+			Description: "A lyllink plugin app for jellyfin integration. Enables live playback sync with the popular streaming service jellyfin.",
+			VisitButton: Button{
+				Text: "Download",
+				Link: "https://github.com/Wlczak/lylink-jellyfin/releases/latest"},
+			GitHubButton: Button{
+				Link: "https://github.com/Wlczak/lylink-jellyfin/",
+			},
+			TechStack: "GO, Fyne",
+		},
+		{
 			Name:        "JShort",
 			Description: "Simple url shortnener app written in Java spring boot.",
 			VisitButton: Button{

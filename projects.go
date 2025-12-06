@@ -26,7 +26,7 @@ func getProjects() []Project {
 			GitHubButton: Button{
 				Link: "https://github.com/Web-Projekty/buffet-rezervace",
 			},
-			TechStack: "PHP, MariaDB, WebSockets",
+			TechStack: "PHP, Slim, MariaDB, WebSockets",
 		},
 		{
 			Name:        "LyLink",

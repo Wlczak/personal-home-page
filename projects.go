@@ -37,7 +37,7 @@ func getProjects() []Project {
 			GitHubButton: Button{
 				Link: "https://github.com/wlczak/LyLink",
 			},
-			TechStack: "PHP, TypeScript, Twig, Sqlite",
+			TechStack: "PHP, TypeScript, Twig, SQLite",
 		},
 		{
 			Name:        "2D platformer",
@@ -81,7 +81,7 @@ func getProjects() []Project {
 			GitHubButton: Button{
 				Link: "https://github.com/Wlczak/jshort",
 			},
-			TechStack: "Java, Spring Boot, Sqlite",
+			TechStack: "Java, Spring Boot, SQLite",
 		},
 		{
 			Name:        "Tanks",
@@ -104,7 +104,7 @@ func getProjects() []Project {
 			GitHubButton: Button{
 				Link: "https://github.com/Wlczak/blogfinity",
 			},
-			TechStack: "Go, WebSockets, Sqlite, JavaScript",
+			TechStack: "Go, WebSockets, SQLite, JavaScript",
 		},
 		{
 			Name:        "GameList",

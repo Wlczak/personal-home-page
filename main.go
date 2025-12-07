@@ -4,9 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io"
 	"io/fs"
 	"net/http"
 	"os"
+	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +26,13 @@ func main() {
 
 	r := gin.Default()
 
-	r.LoadHTMLGlob("templates/*")
+	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"T": func(key string) string {
+			return ""
+		},
+	}).ParseGlob("templates/*"))
+
+	r.SetHTMLTemplate(tmpl)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusNotFound, "error", gin.H{
@@ -62,32 +72,12 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
-			cookies := c.Request.CookiesNamed("lastvisited")
+		handleIndex(c, "")
+	})
 
-			c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
-			if len(cookies) == 0 {
-				go ping(true, time.Now())
-			} else {
-				cookie := cookies[0]
-				timeStr := cookie.Value
-				timeInt, err := strconv.ParseInt(timeStr, 10, 64)
-				if err != nil {
-					go ping(false, time.UnixMilli(0))
-					return
-				}
-				timeObj := time.UnixMilli(timeInt)
-				go ping(false, timeObj)
-			}
-		}
-
-		projects := getProjects()
-
-		c.HTML(http.StatusOK, "index", gin.H{
-			"Year":     time.Now().Year(),
-			"Title":    "My Projects",
-			"Projects": projects,
-		})
+	r.GET("/:lang", func(c *gin.Context) {
+		lang := c.Param("lang")
+		handleIndex(c, lang)
 	})
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {
@@ -132,6 +122,111 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func handleIndex(c *gin.Context, lang string) {
+	languages := getLanguages()
+	var languageCodes []string
+	for _, l := range languages {
+		languageCodes = append(languageCodes, l.Code)
+	}
+	if lang == "" || !slices.Contains(languageCodes, lang) {
+		lang = "En"
+	}
+
+	if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
+		cookies := c.Request.CookiesNamed("lastvisited")
+
+		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
+		if len(cookies) == 0 {
+			go ping(true, time.Now())
+		} else {
+			cookie := cookies[0]
+			timeStr := cookie.Value
+			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
+			if err != nil {
+				go ping(false, time.UnixMilli(0))
+				return
+			}
+			timeObj := time.UnixMilli(timeInt)
+			go ping(false, timeObj)
+		}
+	}
+
+	projects := getProjects()
+
+	translations := getTranslations()
+
+	T := makeTranslator(lang, translations)
+
+	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"T": T, // placeholder
+	}).ParseGlob("templates/*"))
+
+	var indexTemplate bytes.Buffer
+	err := tmpl.ExecuteTemplate(&indexTemplate, "index", gin.H{
+		"Year":             time.Now().Year(),
+		"Projects":         projects,
+		"Languages":        languages,
+		"SelectedLanguage": lang,
+	})
+	if err != nil {
+		fmt.Println(err)
+		panic("failed to execute template")
+	}
+	body, _ := io.ReadAll(&indexTemplate)
+	c.Data(http.StatusOK, "text/html", body)
+	// c.HTML(http.StatusOK, "index", gin.H{
+	// "Year": time.Now().Year(),
+	// "Title": map[string]string{
+	// "En": "My Projects",
+	// "Cs": "Mé projekty",
+	// "Jp": "僕のプロジェクト",
+	// },
+	// "Projects":         projects,
+	// "Languages":        languages,
+	// "SelectedLanguage": lang,
+	// "T":                T,
+	// })
+
+}
+
+func makeTranslator(lang string, dict map[string]MultiLangString) func(any) string {
+	return func(input any) string {
+		reflectInput := reflect.ValueOf(input)
+		if reflectInput.Kind() == reflect.String {
+			key := reflectInput.String()
+			if v, ok := dict[key]; ok {
+				if t, ok := getStructField(v, lang); ok {
+					if t != "" {
+						return t
+					}
+					return key
+				}
+			}
+			return key // fallback
+		}
+		if reflectInput.Kind() == reflect.Struct {
+			if v, ok := getStructField(input, lang); ok {
+				return v
+			}
+			return ""
+		}
+		return ""
+	}
+}
+
+func getStructField(v any, field string) (string, bool) {
+	rv := reflect.ValueOf(v)
+
+	// must be struct
+	if rv.Kind() == reflect.Struct {
+		f := rv.FieldByName(field)
+		if f.IsValid() && f.Kind() == reflect.String {
+			return f.String(), true
+		}
+	}
+	return "", false
 }
 
 func renderSitemap(c *gin.Context) {

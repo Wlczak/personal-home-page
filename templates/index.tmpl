@@ -6,25 +6,53 @@
 
 <body
     class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 relative pb-16">
-    <!-- Dark Mode Toggle -->
-    <div class="fixed top-4 right-4 z-10">
-        <button id="theme-toggle" aria-label="Toggle Dark Mode"
-            class="p-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300 cursor-pointer">🌙</button>
+    <div class="fixed top-4 right-4 z-10 flex items-start space-x-3">
+        <div>
+            <button id="theme-toggle" aria-label="Toggle Dark Mode"
+                class="px-3 py-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300 cursor-pointer">🌙</button>
+        </div>
+
+        <div class="relative">
+            <details class="relative">
+                <summary
+                    class="flex items-center gap-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300 cursor-pointer select-none list-none flex-shrink-0 whitespace-nowrap">
+                    <span class="text-sm font-medium">🌐</span>
+                    <span class="text-sm hidden sm:inline leading-[1.5rem]">{{ T "Language" }}</span>
+                    <svg class="w-3 h-3 ml-1" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M6 7l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </summary>
+                <div
+                    class="absolute top-full right-0 mt-2 w-40 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden z-20">
+                    <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                        {{ range $language := .Languages }}
+                        <li>
+                            <a href="/{{ $language.Code }}"
+                                class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <span class="text-lg">{{ $language.Flag }}</span>
+                                <span>{{ $language.Name }}</span>
+                            </a>
+                        </li>
+                        {{ end }}
+                    </ul>
+                </div>
+            </details>
+        </div>
     </div>
 
     <header class="max-w-4xl mx-auto mt-8 mb-8 text-center">
-        <h1 class="text-4xl font-bold mb-2">My Projects</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400">A collection of my recent work and experiments</p>
+        <h1 class="text-4xl font-bold mb-2">{{ T "Title" }}</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">{{ T "IndexSubHeading"}}</p>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {{ range $key, $project := .Projects }}
-        <!-- {{ $project.Name }} -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col transition-colors duration-300">
             <div class="flex flex-col flex-1 justify-between">
                 <div>
                     <h2 class="text-xl font-semibold mb-2">{{ $project.Name }}</h2>
-                    <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $project.Description }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2">{{ T $project.Description }}</p>
                 </div>
                 {{ if $project.TechStack }}
                 <div>
@@ -41,7 +69,7 @@
                     title="{{ if $project.VisitButton.Title }}{{ $project.VisitButton.Title }}{{ end }}"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium transition {{ if $project.VisitButton.Disabled }}opacity-50 cursor-not-allowed pointer-events-none bg-gray-300 text-gray-600 dark:bg-gray-600 dark:text-gray-400{{ else }}bg-blue-600 text-white hover:bg-blue-700{{ end }}"
                     {{ if $project.VisitButton.Disabled }}aria-disabled="true" tabindex="-1" {{ end }}>
-                    {{ if $project.VisitButton.Text }}{{ $project.VisitButton.Text }}{{ else }}Visit{{ end }}
+                    {{ if T $project.VisitButton.Text }}{{ T $project.VisitButton.Text }}{{ else }} {{ T "Visit" }}{{ end }}
                 </a>
                 {{ end }}
 
@@ -52,13 +80,11 @@
                     title="{{ if $project.GitHubButton.Title }}{{ $project.GitHubButton.Title }}{{ end }}"
                     class="flex-1 text-center px-4 py-2 rounded-md font-medium transition {{ if $project.GitHubButton.Disabled }}opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 text-gray-500 dark:bg-gray-600 dark:text-gray-400{{ else }}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600{{ end }}"
                     {{ if $project.GitHubButton.Disabled }}aria-disabled="true" tabindex="-1" {{ end }}>
-                    {{ if $project.GitHubButton.Text }}{{ $project.GitHubButton.Text }}{{ else }}GitHub{{ end }}
+                    {{ if T $project.GitHubButton.Text }}{{ T $project.GitHubButton.Text }}{{ else }}GitHub{{ end }}
                 </a>
                 {{ end }}
             </div>
         </div>
-
-
         {{ end }}
     </main>
     {{template "footer"}}

@@ -62,32 +62,12 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
-			cookies := c.Request.CookiesNamed("lastvisited")
+		handleIndex(c, "")
+	})
 
-			c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
-			if len(cookies) == 0 {
-				go ping(true, time.Now())
-			} else {
-				cookie := cookies[0]
-				timeStr := cookie.Value
-				timeInt, err := strconv.ParseInt(timeStr, 10, 64)
-				if err != nil {
-					go ping(false, time.UnixMilli(0))
-					return
-				}
-				timeObj := time.UnixMilli(timeInt)
-				go ping(false, timeObj)
-			}
-		}
-
-		projects := getProjects()
-
-		c.HTML(http.StatusOK, "index", gin.H{
-			"Year":     time.Now().Year(),
-			"Title":    "My Projects",
-			"Projects": projects,
-		})
+	r.GET("/:lang", func(c *gin.Context) {
+		lang := c.Param("lang")
+		handleIndex(c, lang)
 	})
 
 	r.GET("/assets/*filepath", func(c *gin.Context) {
@@ -132,6 +112,47 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func handleIndex(c *gin.Context, lang string) {
+	languages := getLanguages()
+	if lang == "" {
+		lang = "En"
+	}
+
+	if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
+		cookies := c.Request.CookiesNamed("lastvisited")
+
+		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
+		if len(cookies) == 0 {
+			go ping(true, time.Now())
+		} else {
+			cookie := cookies[0]
+			timeStr := cookie.Value
+			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
+			if err != nil {
+				go ping(false, time.UnixMilli(0))
+				return
+			}
+			timeObj := time.UnixMilli(timeInt)
+			go ping(false, timeObj)
+		}
+	}
+
+	projects := getProjects()
+
+	c.HTML(http.StatusOK, "index", gin.H{
+		"Year": time.Now().Year(),
+		"Title": map[string]string{
+			"En": "My Projects",
+			"Cs": "Vítejte",
+			"Jp": "ようこそ",
+		},
+		"Projects":         projects,
+		"Languages":        languages,
+		"SelectedLanguage": lang,
+	})
+
 }
 
 func renderSitemap(c *gin.Context) {

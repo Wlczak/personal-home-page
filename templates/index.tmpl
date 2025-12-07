@@ -26,27 +26,15 @@
                 <div
                     class="absolute top-full right-0 mt-2 w-40 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden z-20">
                     <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                        {{ range $language := .Languages }}
                         <li>
                             <a href="#"
                                 class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <span class="text-lg">🇬🇧</span>
-                                <span>English</span>
+                                <span class="text-lg">{{ $language.Flag }}</span>
+                                <span>{{ $language.Name }}</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#"
-                                class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <span class="text-lg">🇨🇿</span>
-                                <span>Čeština</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <span class="text-lg">🇯🇵</span>
-                                <span>日本語</span>
-                            </a>
-                        </li>
+                        {{ end }}
                     </ul>
                 </div>
             </details>

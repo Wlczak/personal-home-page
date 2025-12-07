@@ -15,6 +15,32 @@ type Project struct {
 	TechStack    string
 }
 
+type LanguageSelectItem struct {
+	Flag string
+	Name string
+	Code string
+}
+
+func getLanguages() []LanguageSelectItem {
+	return []LanguageSelectItem{
+		{
+			Name: "English",
+			Flag: "🇬🇧",
+			Code: "En",
+		},
+		{
+			Name: "Česky",
+			Flag: "🇨🇿",
+			Code: "Cz",
+		},
+		{
+			Name: "日本語",
+			Flag: "🇯🇵",
+			Code: "Jp",
+		},
+	}
+}
+
 func getProjects() []Project {
 	return []Project{
 		{

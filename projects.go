@@ -1,10 +1,10 @@
 package main
 
 type Button struct {
-	Text     string
+	Text     MultiLangString
 	Disabled bool
 	Link     string
-	Title    string
+	Title    MultiLangString
 }
 
 type Project struct {
@@ -87,7 +87,11 @@ func getProjects() []Project {
 				Jp: "Java Swingで作られた2Dプラットフォームゲーム。",
 			},
 			VisitButton: Button{
-				Text: "Download",
+				Text: MultiLangString{
+					En: "Download",
+					Cs: "Stáhnout",
+					Jp: "ダウンロード",
+				},
 				Link: "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
 			},
 			GitHubButton: Button{
@@ -105,7 +109,11 @@ func getProjects() []Project {
 			GitHubButton: Button{
 				Link:     "https://github.com/Wlczak/Menu",
 				Disabled: true,
-				Text:     "Preparing for individual release",
+				Text: MultiLangString{
+					En: "Preparing for individual release",
+					Cs: "Připravuji pro samostatné vydání",
+					Jp: "個別リリース準備中",
+				},
 			},
 			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
 		},
@@ -117,7 +125,11 @@ func getProjects() []Project {
 				Jp: "Jellyfin統合のためのLyLinkプラグインアプリ。再生の同期を可能にします。",
 			},
 			VisitButton: Button{
-				Text: "Download",
+				Text: MultiLangString{
+					En: "Download",
+					Cs: "Stáhnout",
+					Jp: "ダウンロード",
+				},
 				Link: "https://github.com/Wlczak/lylink-jellyfin/releases/latest",
 			},
 			GitHubButton: Button{
@@ -148,8 +160,12 @@ func getProjects() []Project {
 				Jp: "tankTroubleに触発されたゲームで、いつかフルマルチプレイヤー実装予定。",
 			},
 			VisitButton: Button{
+				Text: MultiLangString{
+					En: "Play",
+					Cs: "Hrát",
+					Jp: "プレイ",
+				},
 				Link: "https://tanks.vlastas.cc/",
-				Text: "Play",
 			},
 			GitHubButton: Button{
 				Link: "https://github.com/Wlczak/go-tanks",

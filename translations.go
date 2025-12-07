@@ -22,5 +22,10 @@ func getTranslations() map[string]MultiLangString {
 			Cs: "Stav stránky",
 			Jp: "ステータスページ",
 		},
+		"Visit": {
+			En: "Visit",
+			Cs: "Zobrazit",
+			Jp: "見る",
+		},
 	}
 }

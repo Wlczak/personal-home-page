@@ -165,12 +165,7 @@ func handleIndex(c *gin.Context, lang string) {
 
 	var indexTemplate bytes.Buffer
 	err := tmpl.ExecuteTemplate(&indexTemplate, "index", gin.H{
-		"Year": time.Now().Year(),
-		"Title": map[string]string{
-			"En": "My Projects",
-			"Cs": "Mé projekty",
-			"Jp": "僕のプロジェクト",
-		},
+		"Year":             time.Now().Year(),
 		"Projects":         projects,
 		"Languages":        languages,
 		"SelectedLanguage": lang,
@@ -196,17 +191,28 @@ func handleIndex(c *gin.Context, lang string) {
 
 }
 
-func makeTranslator(lang string, dict map[string]MultiLangString) func(string) string {
-	return func(key string) string {
-		if v, ok := dict[key]; ok {
-			if t, ok := getStructField(v, lang); ok {
-				if t != "" {
-					return t
+func makeTranslator(lang string, dict map[string]MultiLangString) func(any) string {
+	return func(input any) string {
+		reflectInput := reflect.ValueOf(input)
+		if reflectInput.Kind() == reflect.String {
+			key := reflectInput.String()
+			if v, ok := dict[key]; ok {
+				if t, ok := getStructField(v, lang); ok {
+					if t != "" {
+						return t
+					}
+					return key
 				}
-				return key
 			}
+			return key // fallback
 		}
-		return key // fallback
+		if reflectInput.Kind() == reflect.Struct {
+			if v, ok := getStructField(input, lang); ok {
+				return v
+			}
+			return ""
+		}
+		return ""
 	}
 }
 

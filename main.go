@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io"
 	"io/fs"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +25,13 @@ func main() {
 
 	r := gin.Default()
 
-	r.LoadHTMLGlob("templates/*")
+	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"T": func(key string) string {
+			return ""
+		},
+	}).ParseGlob("templates/*"))
+
+	r.SetHTMLTemplate(tmpl)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusNotFound, "error", gin.H{
@@ -141,18 +150,69 @@ func handleIndex(c *gin.Context, lang string) {
 
 	projects := getProjects()
 
-	c.HTML(http.StatusOK, "index", gin.H{
+	translations := getTranslations()
+
+	T := makeTranslator(lang, translations)
+
+	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"T": T, // placeholder
+	}).ParseGlob("templates/*"))
+
+	var indexTemplate bytes.Buffer
+	err := tmpl.ExecuteTemplate(&indexTemplate, "index", gin.H{
 		"Year": time.Now().Year(),
 		"Title": map[string]string{
 			"En": "My Projects",
-			"Cs": "Vítejte",
-			"Jp": "ようこそ",
+			"Cs": "Mé projekty",
+			"Jp": "僕のプロジェクト",
 		},
 		"Projects":         projects,
 		"Languages":        languages,
 		"SelectedLanguage": lang,
 	})
+	if err != nil {
+		fmt.Println(err)
+		panic("failed to execute template")
+	}
+	body, _ := io.ReadAll(&indexTemplate)
+	c.Data(http.StatusOK, "text/html", body)
+	// c.HTML(http.StatusOK, "index", gin.H{
+	// "Year": time.Now().Year(),
+	// "Title": map[string]string{
+	// "En": "My Projects",
+	// "Cs": "Mé projekty",
+	// "Jp": "僕のプロジェクト",
+	// },
+	// "Projects":         projects,
+	// "Languages":        languages,
+	// "SelectedLanguage": lang,
+	// "T":                T,
+	// })
 
+}
+
+func makeTranslator(lang string, dict map[string]MultiLangString) func(string) string {
+	return func(key string) string {
+		if v, ok := dict[key]; ok {
+			if t, ok := getStructField(v, lang); ok {
+				return t
+			}
+		}
+		return key // fallback
+	}
+}
+
+func getStructField(v any, field string) (string, bool) {
+	rv := reflect.ValueOf(v)
+
+	// must be struct
+	if rv.Kind() == reflect.Struct {
+		f := rv.FieldByName(field)
+		if f.IsValid() && f.Kind() == reflect.String {
+			return f.String(), true
+		}
+	}
+	return "", false
 }
 
 func renderSitemap(c *gin.Context) {

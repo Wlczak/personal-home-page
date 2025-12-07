@@ -21,6 +21,12 @@ type LanguageSelectItem struct {
 	Code string
 }
 
+type MultiLangString struct {
+	En string
+	Cs string
+	Jp string
+}
+
 func getLanguages() []LanguageSelectItem {
 	return []LanguageSelectItem{
 		{
@@ -31,7 +37,7 @@ func getLanguages() []LanguageSelectItem {
 		{
 			Name: "Česky",
 			Flag: "🇨🇿",
-			Code: "Cz",
+			Code: "Cs",
 		},
 		{
 			Name: "日本語",

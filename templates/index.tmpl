@@ -28,7 +28,7 @@
                     <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                         {{ range $language := .Languages }}
                         <li>
-                            <a href="#"
+                            <a href="/{{ $language.Code }}"
                                 class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <span class="text-lg">{{ $language.Flag }}</span>
                                 <span>{{ $language.Name }}</span>

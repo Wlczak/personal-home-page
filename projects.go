@@ -53,7 +53,7 @@ func getProjects() []Project {
 			Name: "Buffet",
 			Description: MultiLangString{
 				En: "A food preordering system for fast food and food stands.",
-				Cs: "Systém předobjednávání jídla pro rychlé občerstvení a stánky.",
+				Cs: "Systém předobjednávání jídla pro školní bufety a stánky s rychlým občerstvením.",
 				Jp: "ファーストフードや屋台のための食品事前注文システム。",
 			},
 			VisitButton: Button{
@@ -68,7 +68,7 @@ func getProjects() []Project {
 			Name: "LyLink",
 			Description: MultiLangString{
 				En: "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
-				Cs: "Multiplatformní sledovač textů, který umožňuje synchronizovat texty v reálném čase s přehrávanou hudbou.",
+				Cs: "Multiplatformní nástroj, který umožňuje synchronizovat texty v reálném čase s přehrávanou hudbou.",
 				Jp: "音楽を再生している間に歌詞をリアルタイムで同期できるマルチプラットフォーム歌詞トラッカー。",
 			},
 			VisitButton: Button{
@@ -121,7 +121,7 @@ func getProjects() []Project {
 			Name: "LyLink-jellyfin",
 			Description: MultiLangString{
 				En: "A lyllink plugin app for jellyfin integration. Enables live playback sync with the popular streaming service jellyfin.",
-				Cs: "Plugin aplikace LyLink pro integraci s Jellyfin. Umožňuje synchronizaci přehrávání.",
+				Cs: "Nezávislý plugin aplikace LyLink pro živou synchronizaci přehrávání s serverem Jellyfin.",
 				Jp: "Jellyfin統合のためのLyLinkプラグインアプリ。再生の同期を可能にします。",
 			},
 			VisitButton: Button{
@@ -155,8 +155,8 @@ func getProjects() []Project {
 		{
 			Name: "Tanks",
 			Description: MultiLangString{
-				En: "tankTrouble inspired game with full multiplayer implementation coming someday.",
-				Cs: "Hra inspirovaná tankTrouble s plánovanou plnou multiplayer implementací.",
+				En: "Tank Trouble inspired game with full multiplayer implementation coming someday.",
+				Cs: "Hra inspirovaná webovou hrou Tank Trouble s plánovaným multiplayerem.",
 				Jp: "tankTroubleに触発されたゲームで、いつかフルマルチプレイヤー実装予定。",
 			},
 			VisitButton: Button{
@@ -175,9 +175,9 @@ func getProjects() []Project {
 		{
 			Name: "Blogfinity",
 			Description: MultiLangString{
-				En: "A never-ending supply of low quality AI generated articles.",
-				Cs: "Nekonečné množství nízkokvalitních AI generovaných článků.",
-				Jp: "低品質なAI生成記事が無限に供給されるブログ。",
+				En: "A never-ending supply of low quality AI generated articles. Now working more than 5% of the time.",
+				Cs: "Nekonečná záplava nekvalitních AI generovaných článků. Nově online více než 5% času.",
+				Jp: "低品質なAI生成記事が無限に供給されるブログ。現在、稼働率は5%以上です。",
 			},
 			VisitButton: Button{
 				Link: "https://blogfinity.vlastas.cc/",

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -125,7 +126,11 @@ func main() {
 
 func handleIndex(c *gin.Context, lang string) {
 	languages := getLanguages()
-	if lang == "" {
+	var languageCodes []string
+	for _, l := range languages {
+		languageCodes = append(languageCodes, l.Code)
+	}
+	if lang == "" || !slices.Contains(languageCodes, lang) {
 		lang = "En"
 	}
 
@@ -195,7 +200,10 @@ func makeTranslator(lang string, dict map[string]MultiLangString) func(string) s
 	return func(key string) string {
 		if v, ok := dict[key]; ok {
 			if t, ok := getStructField(v, lang); ok {
-				return t
+				if t != "" {
+					return t
+				}
+				return key
 			}
 		}
 		return key // fallback

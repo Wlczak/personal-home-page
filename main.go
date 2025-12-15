@@ -131,7 +131,10 @@ func handleIndex(c *gin.Context, lang string) {
 		languageCodes = append(languageCodes, l.Code)
 	}
 	if lang == "" || !slices.Contains(languageCodes, lang) {
-		lang = "En"
+		lang = chooseLanguageBasedOnHeader(c.Request.Header.Get("Accept-Language"), languageCodes)
+		if lang == "" {
+			lang = "En"
+		}
 	}
 
 	if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
@@ -322,4 +325,19 @@ func postWebhook(request WebHookRequest) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func chooseLanguageBasedOnHeader(header string, languageCodes []string) string {
+	languagePriorityPairs := strings.Split(header, ",")
+
+	for _, l := range languagePriorityPairs {
+		language := strings.Split(l, ";")
+		for _, lc := range languageCodes {
+			if strings.ToLower(lc) == language[0] {
+				return lc
+			}
+		}
+	}
+
+	return "En"
 }

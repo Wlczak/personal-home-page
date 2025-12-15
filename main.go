@@ -132,7 +132,6 @@ func handleIndex(c *gin.Context, lang string) {
 	}
 	if lang == "" || !slices.Contains(languageCodes, lang) {
 		lang = chooseLanguageBasedOnHeader(c.Request.Header.Get("Accept-Language"), languageCodes)
-		fmt.Println("Selected: ", lang)
 		if lang == "" {
 			lang = "En"
 		}

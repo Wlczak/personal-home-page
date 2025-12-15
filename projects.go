@@ -24,7 +24,7 @@ type LanguageSelectItem struct {
 type MultiLangString struct {
 	En string
 	Cs string
-	Jp string
+	Ja string
 }
 
 func getLanguages() []LanguageSelectItem {
@@ -42,7 +42,7 @@ func getLanguages() []LanguageSelectItem {
 		{
 			Name: "日本語",
 			Flag: "🇯🇵",
-			Code: "Jp",
+			Code: "Ja",
 		},
 	}
 }
@@ -54,7 +54,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A food preordering system for fast food and food stands.",
 				Cs: "Systém předobjednávání jídla pro školní bufety a stánky s rychlým občerstvením.",
-				Jp: "ファーストフードや屋台のための食品事前注文システム。",
+				Ja: "ファーストフードや屋台のための食品事前注文システム。",
 			},
 			VisitButton: Button{
 				Link: "https://buffet.vlastas.cc/",
@@ -69,7 +69,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
 				Cs: "Multiplatformní nástroj, který umožňuje synchronizovat texty v reálném čase s přehrávanou hudbou.",
-				Jp: "音楽を再生している間に歌詞をリアルタイムで同期できるマルチプラットフォーム歌詞トラッカー。",
+				Ja: "音楽を再生している間に歌詞をリアルタイムで同期できるマルチプラットフォーム歌詞トラッカー。",
 			},
 			VisitButton: Button{
 				Link: "https://lylink.vlastas.cc/",
@@ -84,13 +84,13 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A 2D platformer game made with Java swing.",
 				Cs: "2D plošinovka vytvořená pomocí Java Swing.",
-				Jp: "Java Swingで作られた2Dプラットフォームゲーム。",
+				Ja: "Java Swingで作られた2Dプラットフォームゲーム。",
 			},
 			VisitButton: Button{
 				Text: MultiLangString{
 					En: "Download",
 					Cs: "Stáhnout",
-					Jp: "ダウンロード",
+					Ja: "ダウンロード",
 				},
 				Link: "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
 			},
@@ -104,7 +104,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "Modular menu library designed for I2C LCD displays. (Tested on 16x2 and 20x4 displays)",
 				Cs: "Modulární knihovna menu navržená pro I2C LCD displeje. (Testováno na 16x2 a 20x4 displejích)",
-				Jp: "I2C LCDディスプレイ向けに設計されたモジュール式メニューライブラリ。（16x2と20x4でテスト済み）",
+				Ja: "I2C LCDディスプレイ向けに設計されたモジュール式メニューライブラリ。（16x2と20x4でテスト済み）",
 			},
 			GitHubButton: Button{
 				Link:     "https://github.com/Wlczak/Menu",
@@ -112,7 +112,7 @@ func getProjects() []Project {
 				Text: MultiLangString{
 					En: "Preparing for individual release",
 					Cs: "Připravuji pro samostatné vydání",
-					Jp: "個別リリース準備中",
+					Ja: "個別リリース準備中",
 				},
 			},
 			TechStack: "C/C++, Arduino libs, LiquidCrystal I2C library",
@@ -122,13 +122,13 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A lyllink plugin app for jellyfin integration. Enables live playback sync with the popular streaming service jellyfin.",
 				Cs: "Nezávislý plugin aplikace LyLink pro živou synchronizaci přehrávání s serverem Jellyfin.",
-				Jp: "Jellyfin統合のためのLyLinkプラグインアプリ。再生の同期を可能にします。",
+				Ja: "Jellyfin統合のためのLyLinkプラグインアプリ。再生の同期を可能にします。",
 			},
 			VisitButton: Button{
 				Text: MultiLangString{
 					En: "Download",
 					Cs: "Stáhnout",
-					Jp: "ダウンロード",
+					Ja: "ダウンロード",
 				},
 				Link: "https://github.com/Wlczak/lylink-jellyfin/releases/latest",
 			},
@@ -142,7 +142,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "Simple url shortnener app written in Java spring boot.",
 				Cs: "Jednoduchá aplikace pro zkracování URL napsaná v Java Spring Boot.",
-				Jp: "Java Spring Bootで書かれたシンプルなURL短縮アプリ。",
+				Ja: "Java Spring Bootで書かれたシンプルなURL短縮アプリ。",
 			},
 			VisitButton: Button{
 				Link: "https://jshort.vlastas.cc/",
@@ -157,13 +157,13 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "Tank Trouble inspired game with full multiplayer implementation coming someday.",
 				Cs: "Hra inspirovaná webovou hrou Tank Trouble s plánovaným multiplayerem.",
-				Jp: "tankTroubleに触発されたゲームで、いつかフルマルチプレイヤー実装予定。",
+				Ja: "tankTroubleに触発されたゲームで、いつかフルマルチプレイヤー実装予定。",
 			},
 			VisitButton: Button{
 				Text: MultiLangString{
 					En: "Play",
 					Cs: "Hrát",
-					Jp: "プレイ",
+					Ja: "プレイ",
 				},
 				Link: "https://tanks.vlastas.cc/",
 			},
@@ -177,7 +177,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A never-ending supply of low quality AI generated articles. Now working more than 5% of the time.",
 				Cs: "Nekonečná záplava nekvalitních AI generovaných článků. Nově online více než 5% času.",
-				Jp: "低品質なAI生成記事が無限に供給されるブログ。現在、稼働率は5%以上です。",
+				Ja: "低品質なAI生成記事が無限に供給されるブログ。現在、稼働率は5%以上です。",
 			},
 			VisitButton: Button{
 				Link: "https://blogfinity.vlastas.cc/",
@@ -192,7 +192,7 @@ func getProjects() []Project {
 			Description: MultiLangString{
 				En: "A gamified todo list.",
 				Cs: "Gamifikovaný úkolníček.",
-				Jp: "ゲーミフィケーションされたToDoリスト。",
+				Ja: "ゲーミフィケーションされたToDoリスト。",
 			},
 			VisitButton: Button{
 				Link: "https://gamelist.vlastas.cc/",

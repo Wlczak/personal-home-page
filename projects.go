@@ -110,7 +110,7 @@ func getProjects() []Project {
 				Link:     "https://github.com/Wlczak/Menu",
 				Disabled: true,
 				Text: MultiLangString{
-					En: "Preparing for individual release",
+					En: "Preparing for separate release",
 					Cs: "Připravuji pro samostatné vydání",
 					Ja: "個別リリース準備中",
 				},

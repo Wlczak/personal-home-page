@@ -191,7 +191,7 @@ func getProjects() []Project {
 			Name: "GameList",
 			Description: MultiLangString{
 				En: "A gamified todo list.",
-				Cs: "Gamifikovaný todo list.",
+				Cs: "Gamifikovaný úkolníček.",
 				Jp: "ゲーミフィケーションされたToDoリスト。",
 			},
 			VisitButton: Button{

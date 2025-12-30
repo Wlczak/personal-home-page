@@ -72,11 +72,10 @@ func main() {
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		handleIndex(c, "")
-	})
-
-	r.GET("/:lang", func(c *gin.Context) {
-		lang := c.Param("lang")
+		lang, isLanguageSet := c.GetQuery("lang")
+		if !isLanguageSet {
+			lang = ""
+		}
 		handleIndex(c, lang)
 	})
 

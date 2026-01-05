@@ -175,9 +175,9 @@ func getProjects() []Project {
 		{
 			Name: "Blogfinity",
 			Description: MultiLangString{
-				En: "A never-ending supply of low quality AI generated articles. Now working more than 5% of the time.",
-				Cs: "Nekonečná záplava nekvalitních AI generovaných článků. Nově online více než 5% času.",
-				Ja: "低品質なAI生成記事が無限に供給されるブログ。現在、稼働率は5%以上です。",
+				En: "A never-ending supply of low quality AI generated articles. Now with more than 5% of uptime.",
+				Cs: "Nekonečná záplava nekvalitních AI generovaných článků. Nově s uptimem přesahujícím 5%.",
+				Ja: "低品質なAI生成記事が無限に供給されるブログ。現在、稼働時間は 5% を超えています。",
 			},
 			VisitButton: Button{
 				Link: "https://blogfinity.vlastas.cc/",

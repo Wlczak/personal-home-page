@@ -4,21 +4,31 @@ func getTranslations() map[string]MultiLangString {
 	return map[string]MultiLangString{
 		"AboutMeHeading": {
 			En: "Hi I'm Adam Vlček",
+			Cs: "Ahoj, jsem Adam Vlček",
+			// Ja: "こんにちは、Adam Vlček",
 		},
 		"AboutMeSubheading": {
 			En: "a junior backend software developer",
+			Cs: "junior backend software developer",
 		},
 		"AboutMe1": {
 			En: `I'm a developer based in Pilsen, Czechia. I mostly build backends for web applications, but I also enjoy working 
 			with embedded systems for their straightforward, hands-on nature.`,
+			Cs: `Jsem Plzeňský vývojář. Nejčastěji tvořím backendy pro webovky, ale rád pracuji třeba i s embedded systémy kvůli příme práci s hardwarem bez abstrakcí.`,
 		},
 		"AboutMe2": {
 			En: `I primarily use PHP and Go for my personal projects, though I like trying out other languages from time
                 to time. I'm currently interested in learning Rust and maybe Kotlin for native android development.`,
+			Cs: `Ve svých projektech nejčastěji využívám jazyky PHP a Go, ale rád zkouším a učím se práci s novými jazyky, či technologiemi. Aktuálně mám zájem se naučit Rust a možná Kotlin pro nativní android vývoj.`,
 		},
-		"MainUsedLanguages": {En: "My main languages"},
+		"MainUsedLanguages": {
+			En: "My main languages",
+			Cs: "Moje nejpoužívanější jazyky",
+		},
 		"ViewMyGitHub": {
 			En: "View GitHub",
+			Cs: "Zobrazit GitHub",
+			Ja: "GitHub を見る",
 		},
 		"ProjectListHeading": {
 			En: "My projects",

@@ -272,7 +272,7 @@ func getStructField(v any, field string) (string, bool) {
 func renderSitemap(c *gin.Context) {
 	stmap := stm.NewSitemap(1)
 	stmap.Create()
-	stmap.SetDefaultHost("https://wlczak.vlastas.cc/")
+	stmap.SetDefaultHost("https://wlczak.net/")
 	stmap.Add(stm.URL{
 		{"loc", "/"},
 		{"priority", "1.0"},

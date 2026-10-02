@@ -17,7 +17,7 @@ test('localized pages have stable SEO and working language links', async ({ page
   await page.getByRole('link',{name:'日本語',exact:true}).click();
   await expect(page).toHaveURL(/\/ja\/projects\/lylink\/$/);
   const sitemap = await request.get('/sitemap.xml');
-  expect((await sitemap.text()).match(/<loc>/g)?.length).toBe(36);
+  expect((await sitemap.text()).match(/<loc>/g)?.length).toBe((projects.length + 3) * 3);
   for (const prefix of ['', '/cs','/ja']) {
     const response = await page.goto(`${prefix}/missing-page`);
     expect(response?.status()).toBe(404);
@@ -30,7 +30,7 @@ test('localized pages have stable SEO and working language links', async ({ page
 test('directory filters, searches and resets', async ({ page }) => {
   await page.goto('/projects/');
   await expect(page.locator('.directory-controls')).toBeVisible();
-  await expect(page.locator('.project-card')).toHaveCount(9);
+  await expect(page.locator('.project-card')).toHaveCount(projects.length);
   await page.getByRole('button',{name:'Hardware',exact:true}).click();
   await expect(page.locator('.project-card')).toHaveCount(1);
   await expect(page.locator('.project-card h3')).toHaveText('Menu ↗');
@@ -61,11 +61,11 @@ test('command palette supports keyboard, focus restoration and theme persistence
   expect(scan.violations).toEqual([]);
 });
 
-test('content and navigation work without JavaScript', async ({ browser }) => {
-  const context = await browser.newContext({javaScriptEnabled:false});
+test('content and navigation work without JavaScript', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({javaScriptEnabled:false,baseURL});
   const page = await context.newPage();
-  await page.goto('http://127.0.0.1:8080/projects/');
-  await expect(page.locator('.project-card')).toHaveCount(9);
+  await page.goto('/projects/');
+  await expect(page.locator('.project-card')).toHaveCount(projects.length);
   await expect(page.locator('.directory-controls')).toBeHidden();
   await page.getByRole('link',{name:'LyLink',exact:true}).click();
   await expect(page.locator('h1')).toHaveText('LyLink');

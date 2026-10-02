@@ -52,10 +52,12 @@ make test
 ```
 
 Browser tests build the production site and start Go on port 8080. They cover all
-36 content pages, SEO metadata, language switching, filters, keyboard interaction,
+all localized content pages, SEO metadata, language switching, filters, keyboard interaction,
 theme persistence, JavaScript-disabled navigation, mobile layout, and WCAG axe checks.
 Go tests cover redirects, caching, HEAD, localized 404s, methods, and file containment.
 The development integration test checks both servers, the API proxy, and shutdown.
+If port 8080 is already in use, run browser tests on another port with
+`PLAYWRIGHT_PORT=18080 npm run test:e2e`.
 
 With `make run` active in another terminal, run `npm run audit` for mobile
 Lighthouse audits of home, project listing, and a detail page. JSON reports are

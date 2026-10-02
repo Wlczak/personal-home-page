@@ -277,5 +277,31 @@
     "source": "https://github.com/Wlczak/gamelist",
     "action": "visit",
     "unavailable": false
+  },
+  {
+    "id": "aws-backup",
+    "name": "AWS-backup",
+    "order": 9,
+    "category": "web",
+    "featured": false,
+    "technologies": ["Go", "Svelte", "SQLite", "AWS S3", "SMB"],
+    "description": {
+      "en": "A self-contained backup tool that archives local folders and SMB shares to AWS S3 Glacier Deep Archive, with a web dashboard.",
+      "cs": "Samostatný zálohovací nástroj pro archivaci místních složek a SMB sdílení do AWS S3 Glacier Deep Archive s webovým přehledem.",
+      "ja": "ローカルフォルダーやSMB共有をAWS S3 Glacier Deep Archiveに保存する、ウェブダッシュボード付きのバックアップツールです。"
+    },
+    "purpose": {
+      "en": "Archive large collections of files from a local directory or SMB share to AWS for long-term storage. A web guide handles setup, while the dashboard provides monitoring and control. Backups can be started manually or run on a configured schedule.",
+      "cs": "Archivovat velké sbírky souborů z místního adresáře nebo SMB sdílení do AWS pro dlouhodobé uložení. Webový průvodce provede nastavením a přehled umožňuje sledování a ovládání. Zálohy lze spouštět ručně nebo podle nastaveného plánu.",
+      "ja": "ローカルディレクトリやSMB共有にある大量のファイルを、長期保管のためにAWSへアーカイブします。ウェブの設定ガイドと、監視・操作用のダッシュボードを備えています。バックアップは手動でも、設定したスケジュールでも実行できます。"
+    },
+    "approach": {
+      "en": "A Go binary embeds a Svelte 5 interface using go:embed. The backup pipeline scans files, creates directory-level ZIP archives, and uploads them to S3 Glacier Deep Archive, keeping a local SQLite index. MinIO provides a development backend. Built as a personal experiment with LLM-assisted development.",
+      "cs": "Go binárka obsahuje rozhraní ve Svelte 5 vložené pomocí go:embed. Zálohovací proces prochází soubory, vytváří ZIP archivy po adresářích a nahrává je do S3 Glacier Deep Archive. Místní index uchovává v SQLite. Pro vývoj slouží MinIO. Projekt vznikl jako osobní experiment s vývojem za pomoci LLM.",
+      "ja": "Goの実行ファイルに、go:embedでSvelte 5の画面を組み込んでいます。ファイルを走査し、ディレクトリ単位でZIPアーカイブを作ってS3 Glacier Deep Archiveへアップロードし、ローカルのSQLiteに索引を保存します。開発環境にはMinIOを使用しています。LLMを活用した開発を試す個人的な実験として作りました。"
+    },
+    "source": "https://github.com/Wlczak/aws-backup",
+    "action": "visit",
+    "unavailable": false
   }
 ]

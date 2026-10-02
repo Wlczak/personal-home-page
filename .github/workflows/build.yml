@@ -2,7 +2,7 @@ name: Build & Push Docker Image
 
 on:
     push:
-        branches: [ "main" ]
+        branches: [ "main", "page-redesign" ]
 
 jobs:
     build-and-push:
@@ -24,6 +24,6 @@ jobs:
                   context: .
                   file: ./Dockerfile
                   push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/personal-home-page:latest
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/personal-home-page:${{ github.ref_name == 'page-redesign' && 'preview' || 'latest' }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max

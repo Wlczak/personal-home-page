@@ -4,17 +4,221 @@ interface Props { locale: Locale }
 const { locale } = Astro.props;
 const t = messages[locale];
 ---
-<div class="desktop-art" aria-hidden="true">
-  <span class="spark spark-one">✳</span><span class="spark spark-two">+</span>
-  <div class="art-sticker mono">HELLO, WORLD!</div>
-  <div class="computer">
+<div class="desktop-art">
+  <span class="spark spark-one" aria-hidden="true">✳</span><span class="spark spark-two" aria-hidden="true">+</span>
+  <div class="art-sticker mono" aria-hidden="true">HELLO, WORLD!</div>
+  <div class="computer" data-computer>
+    <button type="button" class="computer-activate" aria-label={t.computerActivate} aria-controls="computer-input" hidden></button>
     <div class="monitor"><div class="screen">
-      <div class="screen-menu"><span>adam@localhost</span><span>▣</span></div>
-      <div class="terminal"><span class="terminal-comment">// a work in progress</span><br /><span class="terminal-prompt">$</span> whoami<br /><strong>Adam Vlček</strong><br /><span class="terminal-prompt">$</span> cat interests.txt<br /><span>backend / games / hardware</span><br /><span class="terminal-prompt">$</span> <span class="cursor">▌</span></div>
-      <div class="screen-status"><span>Go + Astro</span><span>● {t.location}</span></div>
-    </div><div class="monitor-footer"><span>AV / 01</span><span class="power-light"></span></div></div>
-    <div class="monitor-neck"></div><div class="monitor-base"></div>
-    <div class="keyboard"><div></div><div></div><div></div><div class="spacebar"></div></div>
+      <div class="screen-menu"><span aria-hidden="true">adam@localhost</span><span class="screen-idle-icon" aria-hidden="true">▣</span><button type="button" class="computer-close" aria-label={t.close} hidden><span aria-hidden="true">ESC ×</span></button></div>
+      <div class="terminal">
+        <div class="terminal-history" aria-hidden="true"><span class="terminal-comment">// a work in progress</span><br /><span class="terminal-prompt">$</span> whoami<br /><strong>Adam Vlček</strong><br /><span class="terminal-prompt">$</span> cat interests.txt<br /><span>backend / games / hardware</span></div>
+        <div class="terminal-idle-prompt" aria-hidden="true"><span class="terminal-prompt">$</span> <span class="cursor">▌</span></div>
+        <div class="terminal-transcript" role="log" aria-label={t.computerTerminal} aria-live="polite" hidden></div>
+        <div class="terminal-entry" hidden><span class="terminal-prompt" aria-hidden="true">$</span><textarea id="computer-input" class="terminal-editor" aria-label={t.terminalInput} rows="1" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div>
+      </div>
+      <div class="screen-status" aria-hidden="true"><span>Go + Astro</span><span>● {t.location}</span></div>
+    </div><div class="monitor-footer" aria-hidden="true"><span>AV / 01</span><span class="power-light"></span></div></div>
+    <div class="monitor-neck" aria-hidden="true"></div><div class="monitor-base" aria-hidden="true"></div>
+    <div class="keyboard" aria-hidden="true"><div></div><div></div><div></div><div class="spacebar"></div></div>
   </div>
-  <div class="floppy"><span>IDEAS<br />&amp; OTHER<br />GOOD STUFF</span><div></div></div>
+  <div class="floppy" aria-hidden="true"><span>IDEAS<br />&amp; OTHER<br />GOOD STUFF</span><div></div></div>
+  <dialog class="computer-dialog" aria-label={t.computerTerminal}></dialog>
 </div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-computer]').forEach(computer => {
+    const activate = computer.querySelector<HTMLButtonElement>('.computer-activate');
+    const idlePrompt = computer.querySelector<HTMLElement>('.terminal-idle-prompt');
+    const entry = computer.querySelector<HTMLElement>('.terminal-entry');
+    const editor = computer.querySelector<HTMLTextAreaElement>('.terminal-editor');
+    const transcript = computer.querySelector<HTMLElement>('.terminal-transcript');
+    const close = computer.querySelector<HTMLButtonElement>('.computer-close');
+    const icon = computer.querySelector<HTMLElement>('.screen-idle-icon');
+    const parent = computer.parentElement;
+    const dialog = parent?.querySelector<HTMLDialogElement>('.computer-dialog');
+    const nextSibling = computer.nextSibling;
+    if (!activate || !idlePrompt || !entry || !editor || !transcript || !close || !icon || !parent || !dialog) return;
+    const history: string[] = [];
+    let historyIndex = 0;
+    let draft = '';
+    let previousOverflow = '';
+    let placeholder: HTMLElement | null = null;
+    let closing = false;
+    let animations: Animation[] = [];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const shapeSelector = '.screen, .screen-menu, .terminal, .screen-status';
+    const shapes = Array.from(computer.querySelectorAll<HTMLElement>(shapeSelector));
+    const text = computer.querySelector<HTMLElement>('.terminal strong')!;
+    const styleProperties = ['width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginBottom', 'borderRadius', 'fontSize', 'lineHeight'] as const;
+    function frame(element: HTMLElement): Keyframe {
+      const style = getComputedStyle(element);
+      return Object.fromEntries(styleProperties.map(property => [property, style[property]]));
+    }
+    function compactFrames() {
+      return Array.from(placeholder!.querySelectorAll<HTMLElement>(shapeSelector)).map(frame);
+    }
+    function stopAnimations() {
+      animations.forEach(animation => animation.cancel());
+      animations = [];
+    }
+    function compactTransform() {
+      const screen = placeholder!.querySelector<HTMLElement>('.screen')!;
+      const source = screen.getBoundingClientRect();
+      const target = computer.getBoundingClientRect();
+      const x = source.x + source.width / 2 - target.x - screen.offsetWidth / 2;
+      const y = source.y + source.height / 2 - target.y - screen.offsetHeight / 2;
+      return `translate(${x}px, ${y}px) rotate(-3deg)`;
+    }
+    function compactComputerFrame(): Keyframe {
+      const screen = placeholder!.querySelector<HTMLElement>('.screen')!;
+      return {width: `${screen.offsetWidth}px`, height: `${screen.offsetHeight}px`, transform: compactTransform()};
+    }
+    async function transition(from: Keyframe, to: Keyframe, fromShapes: Keyframe[], toShapes: Keyframe[], fromText: Keyframe, toText: Keyframe, opening: boolean, background: string) {
+      stopAnimations();
+      if (reducedMotion.matches) return;
+      const options = {duration: opening ? 520 : 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'both' as const};
+      const motion = computer.animate([from, to], options);
+      const fade = dialog!.animate([{backgroundColor: background}, {backgroundColor: opening ? '#172620' : 'transparent'}], options);
+      // Expand only the CLI. The original hardware stays untouched behind it.
+      const shapeAnimations = shapes.map((shape, index) => shape.animate([
+        {...fromShapes[index], flex: '0 0 auto'},
+        {...toShapes[index], flex: '0 0 auto'},
+      ], options));
+      const textAnimation = text.animate([fromText, toText], options);
+      animations = [motion, fade, ...shapeAnimations, textAnimation];
+      await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+      // A newer transition may have interrupted this one.
+      if (animations[0] === motion) stopAnimations();
+    }
+    function resizeInput() {
+      editor!.style.height = 'auto';
+      editor!.style.height = `${editor!.scrollHeight}px`;
+    }
+    function updateInput() {
+      resizeInput();
+      const terminal = computer.querySelector<HTMLElement>('.terminal');
+      if (terminal) terminal.scrollTop = terminal.scrollHeight;
+    }
+    function submitLine() {
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      const prompt = document.createElement('span');
+      prompt.className = 'terminal-prompt';
+      prompt.setAttribute('aria-hidden', 'true');
+      prompt.textContent = '$';
+      const value = document.createElement('span');
+      // Submitted text is inert, read-only history, never HTML or a command.
+      value.textContent = editor!.value;
+      line.append(prompt, value);
+      transcript!.append(line);
+      if (editor!.value) history.push(editor!.value);
+      editor!.value = '';
+      historyIndex = history.length;
+      draft = '';
+      updateInput();
+    }
+    editor.addEventListener('keydown', event => {
+      if (event.isComposing || event.key === 'Process') return;
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitLine();
+      } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        event.preventDefault();
+        if (historyIndex === history.length) draft = editor.value;
+        historyIndex = Math.max(0, Math.min(history.length, historyIndex + (event.key === 'ArrowUp' ? -1 : 1)));
+        editor.value = historyIndex === history.length ? draft : history[historyIndex];
+        editor.setSelectionRange(editor.value.length, editor.value.length);
+        updateInput();
+      }
+    });
+    // Mobile keyboards can submit through beforeinput without a keydown.
+    editor.addEventListener('beforeinput', event => {
+      if (!event.isComposing && (event.inputType === 'insertLineBreak' || event.inputType === 'insertParagraph')) {
+        event.preventDefault();
+        submitLine();
+      }
+    });
+    editor.addEventListener('input', event => {
+      if ((event as InputEvent).isComposing) return;
+      // Pasted newlines become spaces rather than silently submitting lines.
+      editor.value = editor.value.replace(/[\r\n]+/g, ' ');
+      historyIndex = history.length;
+      updateInput();
+    });
+    activate.hidden = false;
+    activate.addEventListener('click', () => {
+      if (dialog.open) return;
+      // Leave a non-interactive copy of the computer in the background.
+      placeholder = computer.cloneNode(true) as HTMLElement;
+      placeholder.removeAttribute('data-computer');
+      placeholder.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+      placeholder.inert = true;
+      placeholder.setAttribute('aria-hidden', 'true');
+      parent.insertBefore(placeholder, computer);
+      // Move the same computer into the top layer, retaining the visible CLI.
+      dialog.append(computer);
+      computer.dataset.active = 'true';
+      idlePrompt.hidden = true;
+      icon.hidden = true;
+      activate.hidden = true;
+      close.hidden = false;
+      entry.hidden = false;
+      transcript.hidden = false;
+      previousOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      dialog.showModal();
+      resizeInput();
+      const compactText = frame(placeholder.querySelector<HTMLElement>('.terminal strong')!);
+      void transition(
+        compactComputerFrame(),
+        {width: `${computer.offsetWidth}px`, height: `${computer.offsetHeight}px`, transform: 'translate(0px, 0px) rotate(0deg)'},
+        compactFrames(), shapes.map(frame),
+        {fontSize: compactText.fontSize, lineHeight: compactText.lineHeight},
+        {fontSize: getComputedStyle(text).fontSize, lineHeight: getComputedStyle(text).lineHeight},
+        true, 'transparent',
+      );
+      editor.focus({ preventScroll: true });
+    });
+    async function dismiss() {
+      if (closing || !dialog!.open) return;
+      closing = true;
+      const current = {...frame(computer), transform: getComputedStyle(computer).transform};
+      const currentShapes = shapes.map(frame);
+      const currentText = {fontSize: getComputedStyle(text).fontSize, lineHeight: getComputedStyle(text).lineHeight};
+      const background = getComputedStyle(dialog!).backgroundColor;
+      stopAnimations();
+      const compactText = frame(placeholder!.querySelector<HTMLElement>('.terminal strong')!);
+      await transition(
+        current,
+        compactComputerFrame(),
+        currentShapes, compactFrames(), currentText,
+        {fontSize: compactText.fontSize, lineHeight: compactText.lineHeight},
+        false, background,
+      );
+      dialog!.close();
+    }
+    close.addEventListener('click', () => { void dismiss(); });
+    dialog.addEventListener('cancel', event => {
+      event.preventDefault();
+      void dismiss();
+    });
+    dialog.addEventListener('close', () => {
+      stopAnimations();
+      parent.insertBefore(computer, nextSibling);
+      placeholder?.remove();
+      placeholder = null;
+      closing = false;
+      delete computer.dataset.active;
+      idlePrompt.hidden = false;
+      icon.hidden = false;
+      activate.hidden = false;
+      close.hidden = true;
+      entry.hidden = true;
+      transcript.hidden = true;
+      document.documentElement.style.overflow = previousOverflow;
+      activate.focus({ preventScroll: true });
+    });
+    window.addEventListener('resize', () => { if (dialog.open) resizeInput(); });
+  });
+</script>

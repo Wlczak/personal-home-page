@@ -9,6 +9,7 @@ const en = {
   language: 'Language', theme: 'Toggle color theme', commands: 'Quick navigation', close: 'Close',
   heroLead: 'A little curiosity.', heroEnd: 'A lot of building.',
   heroText: 'Backends, browser experiments, and the occasional bit of hardware. Welcome to my corner of the internet.',
+  computerActivate: 'Click to type into the computer', terminalInput: 'Terminal input', computerTerminal: 'Computer terminal',
   explore: 'Explore my projects', meet: 'Meet the developer', location: 'Pilsen, Czechia', role: 'Junior backend developer',
   featured: 'A few things I’ve made', featuredIntro: 'Useful tools, small games, and ideas that became code.', allProjects: 'All projects',
   interests: 'What keeps me curious', web: 'Web & tools', games: 'Games', hardware: 'Hardware',
@@ -36,6 +37,7 @@ type Messages = typeof en;
 export const messages: Record<Locale, Messages> = {
   en,
   cs: {
+    computerActivate: 'Kliknutím začít psát do počítače', terminalInput: 'Vstup terminálu', computerTerminal: 'Počítačový terminál',
     home: 'Domů', about: 'O mně', projects: 'Projekty', skip: 'Přejít na obsah', language: 'Jazyk', theme: 'Přepnout barevný motiv', commands: 'Rychlá navigace', close: 'Zavřít',
     heroLead: 'Trochu zvědavosti.', heroEnd: 'Spousta tvoření.', heroText: 'Backendy, pokusy v prohlížeči a občas kousek hardwaru. Vítejte v mém koutku internetu.',
     explore: 'Prozkoumat projekty', meet: 'Poznat vývojáře', location: 'Plzeň, Česko', role: 'Junior backend vývojář',
@@ -52,6 +54,7 @@ export const messages: Record<Locale, Messages> = {
     homeDescription: 'Adam Vlček je junior backend vývojář z Plzně. Prozkoumejte projekty v PHP, Go a Javě, hry, hudební nástroje a embedded experimenty.',
   },
   ja: {
+    computerActivate: 'クリックしてコンピューターに入力', terminalInput: 'ターミナル入力', computerTerminal: 'コンピューターのターミナル',
     home: 'ホーム', about: '自己紹介', projects: 'プロジェクト', skip: '本文へ移動', language: '言語', theme: '配色を切り替える', commands: 'クイックナビゲーション', close: '閉じる',
     heroLead: '小さな好奇心。', heroEnd: 'たくさんのものづくり。', heroText: 'バックエンド、ブラウザーでの実験、ときどきハードウェア。私のインターネットの片隅へようこそ。', explore: 'プロジェクトを見る', meet: '開発者を知る', location: 'チェコ・ピルゼン', role: 'ジュニアバックエンドエンジニア',
     featured: '作ってきたもの', featuredIntro: '便利なツール、小さなゲーム、コードになったアイデア。', allProjects: 'すべてのプロジェクト', interests: '興味のあること', web: 'ウェブ・ツール', games: 'ゲーム', hardware: 'ハードウェア',

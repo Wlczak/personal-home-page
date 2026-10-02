@@ -300,8 +300,9 @@
       "cs": "Go binárka obsahuje rozhraní ve Svelte 5 vložené pomocí go:embed. Zálohovací proces prochází soubory, vytváří ZIP archivy po adresářích a nahrává je do S3 Glacier Deep Archive. Místní index uchovává v SQLite. Pro vývoj slouží MinIO. Projekt vznikl jako osobní experiment s vývojem za pomoci LLM.",
       "ja": "Goの実行ファイルに、go:embedでSvelte 5の画面を組み込んでいます。ファイルを走査し、ディレクトリ単位でZIPアーカイブを作ってS3 Glacier Deep Archiveへアップロードし、ローカルのSQLiteに索引を保存します。開発環境にはMinIOを使用しています。LLMを活用した開発を試す個人的な実験として作りました。"
     },
+    "demo": "https://github.com/Wlczak/aws-backup/releases",
     "source": "https://github.com/Wlczak/aws-backup",
-    "action": "visit",
+    "action": "download",
     "unavailable": false
   }
 ]

@@ -1,0 +1,14 @@
+---
+import Page from '../components/Page.astro';
+import { locales, type Locale } from '../lib/i18n';
+import { allProjects } from '../lib/projects';
+export async function getStaticPaths() {
+  const projects = await allProjects();
+  return locales.flatMap(locale=>['','about','projects',...projects.map(p=>`projects/${p.id}`)].map(page=>({
+    params: { path: [locale==='en'?'':locale,page].filter(Boolean).join('/') || undefined },
+    props: { locale, page },
+  })));
+}
+const { locale, page } = Astro.props as { locale: Locale; page: string };
+---
+<Page locale={locale} page={page} />

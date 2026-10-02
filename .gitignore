@@ -3,3 +3,8 @@
 assets/styles-compiled.css
 .env
 personal-home-page
+/dist/
+/.astro/
+/playwright-report/
+/test-results/
+/reports/

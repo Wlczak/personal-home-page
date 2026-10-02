@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/wlczak_logo.png';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import bodyFont from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import extendedFont from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-ext-wght-normal.woff2?url';
+import monoFont from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url';
+import '../styles/global.css';
+import CommandPalette from '../components/CommandPalette';
+import { locales, languageNames, messages, url, type Locale } from '../lib/i18n';
+import { allProjects } from '../lib/projects';
+interface Props { locale: Locale; title: string; description: string; page?: string; noindex?: boolean; breadcrumbs?: { name: string; path: string }[] }
+const { locale, title, description, page = '', noindex = false, breadcrumbs = [] } = Astro.props;
+const t = messages[locale];
+const canonical = new URL(url(locale, page), Astro.site!);
+const links = [ { name: t.home, href: url(locale) }, { name: t.about, href: url(locale,'about') }, { name: t.projects, href: url(locale,'projects') }, ...(await allProjects()).map(p=>({name:p.data.name,href:url(locale,`projects/${p.id}`)})) ];
+const structured = {
+  '@context': 'https://schema.org', '@graph': [
+    { '@type': 'Person', '@id': 'https://wlczak.net/#person', name: 'Adam Vlček', url: 'https://wlczak.net/', jobTitle: 'Junior backend developer', sameAs: ['https://github.com/Wlczak'], homeLocation: { '@type': 'Place', name: 'Pilsen, Czechia' } },
+    { '@type': 'WebSite', '@id': 'https://wlczak.net/#website', name: 'Adam Vlček', url: 'https://wlczak.net/', inLanguage: ['en','cs','ja'], author: { '@id': 'https://wlczak.net/#person' } },
+    ...(breadcrumbs.length ? [{ '@type': 'BreadcrumbList', itemListElement: breadcrumbs.map((crumb,i)=>({ '@type': 'ListItem', position:i+1, name:crumb.name, item: new URL(url(locale,crumb.path),Astro.site!).href })) }] : []),
+  ],
+};
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Adam Vlček" />
+    <meta name="theme-color" content="#f4f1e8" />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={extendedFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/png" href={logo.src} />
+    {!noindex && <><link rel="canonical" href={canonical} />{locales.map(lang=><link rel="alternate" hreflang={lang} href={new URL(url(lang,page),Astro.site!)} />)}<link rel="alternate" hreflang="x-default" href={new URL(url('en',page),Astro.site!)} /></>}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta property="og:type" content="website" /><meta property="og:site_name" content="Adam Vlček" />
+    <meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={{en:'en_US',cs:'cs_CZ',ja:'ja_JP'}[locale]} />
+    <meta property="og:image" content={new URL('/og.png',Astro.site!)} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Adam Vlček — backend developer. Go, PHP, Java." />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} /><meta name="twitter:image" content={new URL('/og.png',Astro.site!)} />
+    <script type="application/ld+json" set:html={JSON.stringify(structured).replace(/</g,'\\u003c')} />
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('theme');
+        document.documentElement.dataset.theme = saved === 'dark' || (saved !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      } catch { document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{t.skip}</a>
+    <header class="site-header wrap">
+      <a class="brand" href={url(locale)} aria-label={`adam.vlček — ${t.home}`}><Image src={logo} width={32} height={32} alt="" loading="eager" /><span>adam<span class="brand-dot">.</span>vlček<span class="brand-cursor" aria-hidden="true">_</span></span></a>
+      <nav aria-label={t.commands} class="main-nav">{[['',t.home],['projects',t.projects],['about',t.about]].map(([path,label])=><a href={url(locale,path)} aria-current={page===path?'page':undefined}>{label}</a>)}</nav>
+      <div class="header-tools"><CommandPalette locale={locale} links={links} client:idle /><button class="theme-toggle" type="button" aria-label={t.theme} hidden><span aria-hidden="true">◐</span></button></div>
+    </header>
+    <div class="desktop-toolbar wrap"><span class="mono">~/adam/{page || 'home'}</span><nav aria-label={t.language} class="language-nav">{locales.map(lang=><a href={url(lang,page)} lang={lang} hreflang={lang} aria-current={lang===locale?'true':undefined}>{languageNames[lang]}</a>)}</nav></div>
+    <main id="main" tabindex="-1" class="wrap"><slot /></main>
+    <footer class="site-footer wrap"><div><a class="footer-name" href={url(locale)}>Adam Vlček</a><p>{t.footer}</p></div><div class="footer-links"><a href="https://github.com/Wlczak" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://status.vlastas.cc/status/wlczak" target="_blank" rel="noopener noreferrer">{t.status} ↗</a><span>© {new Date().getFullYear()}</span></div></footer>
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      if (button) {
+        button.hidden = false;
+        button.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+        button.addEventListener('click', () => {
+          const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.dataset.theme = theme;
+          button.setAttribute('aria-pressed', String(theme === 'dark'));
+          try { localStorage.setItem('theme', theme); } catch {}
+        });
+      }
+    </script>
+  </body>
+</html>

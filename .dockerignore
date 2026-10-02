@@ -1,0 +1,12 @@
+.git
+.agents
+.codex
+.aws
+node_modules
+dist
+.astro
+personal-home-page
+test-results
+playwright-report
+reports
+.env

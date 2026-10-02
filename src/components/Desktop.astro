@@ -1,0 +1,20 @@
+---
+import { messages, type Locale } from '../lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = messages[locale];
+---
+<div class="desktop-art" aria-hidden="true">
+  <span class="spark spark-one">✳</span><span class="spark spark-two">+</span>
+  <div class="art-sticker mono">HELLO, WORLD!</div>
+  <div class="computer">
+    <div class="monitor"><div class="screen">
+      <div class="screen-menu"><span>adam@localhost</span><span>▣</span></div>
+      <div class="terminal"><span class="terminal-comment">// a work in progress</span><br /><span class="terminal-prompt">$</span> whoami<br /><strong>Adam Vlček</strong><br /><span class="terminal-prompt">$</span> cat interests.txt<br /><span>backend / games / hardware</span><br /><span class="terminal-prompt">$</span> <span class="cursor">▌</span></div>
+      <div class="screen-status"><span>Go + Astro</span><span>● {t.location}</span></div>
+    </div><div class="monitor-footer"><span>AV / 01</span><span class="power-light"></span></div></div>
+    <div class="monitor-neck"></div><div class="monitor-base"></div>
+    <div class="keyboard"><div></div><div></div><div></div><div class="spacebar"></div></div>
+  </div>
+  <div class="floppy"><span>IDEAS<br />&amp; OTHER<br />GOOD STUFF</span><div></div></div>
+</div>

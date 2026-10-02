@@ -1,12 +1,37 @@
 {
-  "scripts": {
-    "build": "tailwindcss -c ./tailwind.config.js -i ./style-config.css -o ./assets/styles-compiled.css --minify",
-    "dev": "tailwindcss -c ./tailwind.config.js -i ./style-config.css -o ./assets/styles-compiled.css --watch"
+  "name": "personal-home-page",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=9.6.5"
   },
-  "devDependencies": {
-    "tailwindcss": "^4.3.2"
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:astro": "astro dev --ignore-lock",
+    "build": "astro build",
+    "check": "astro check",
+    "test:e2e": "playwright test",
+    "test:dev": "node --test tests/dev.test.mjs",
+    "audit": "node scripts/audit.mjs"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.3.3"
+    "@astrojs/react": "^7.0.0",
+    "@fontsource-variable/space-grotesk": "^5.2.0",
+    "@fontsource/ibm-plex-mono": "^5.2.0",
+    "astro": "^7.3.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.56.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "lighthouse": "^13.0.0",
+    "typescript": "^5.9.0"
   }
 }

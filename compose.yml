@@ -1,19 +1,15 @@
 services:
-    personal-homepage:
-        image: wlczak/personal-home-page:latest
-        labels:
-            - com.centurylinklabs.watchtower.enable=true
-        volumes:
-        # - ./:/app For local development
-            - ./conf:/app/conf
-        working_dir: /app
-        restart: always
-        ports:
-            - "1234:8080"
-        command: ./PHP
-        networks:
-            - personal-home-page-net
+  personal-homepage:
+    image: wlczak/personal-home-page:latest
+    build: .
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    restart: unless-stopped
+    ports:
+      - "1234:8080"
+    networks:
+      - personal-home-page-net
 
 networks:
-    personal-home-page-net:
-        name: personal-home-page-net
+  personal-home-page-net:
+    name: personal-home-page-net

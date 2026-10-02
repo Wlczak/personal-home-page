@@ -1,0 +1,281 @@
+[
+  {
+    "id": "buffet",
+    "name": "Buffet",
+    "order": 0,
+    "category": "web",
+    "featured": true,
+    "technologies": [
+      "PHP",
+      "Slim",
+      "MariaDB",
+      "WebSockets"
+    ],
+    "description": {
+      "en": "A food preordering system for fast food and food stands.",
+      "cs": "Systém předobjednávání jídla pro školní bufety a stánky s rychlým občerstvením.",
+      "ja": "ファーストフードや屋台のための食品事前注文システム。"
+    },
+    "purpose": {
+      "en": "Order food ahead of time instead of placing every order at the counter. Buffet brings preordering to food stands and school buffets.",
+      "cs": "Objednat jídlo předem místo čekání na objednávku u pultu. Buffet přináší předobjednávky do stánků a školních bufetů.",
+      "ja": "店頭で注文する代わりに、食べ物を事前注文するためのシステムです。学校の売店や屋台を対象にしています。"
+    },
+    "approach": {
+      "en": "The project combines PHP and Slim with MariaDB, with WebSockets included in its stack.",
+      "cs": "Projekt kombinuje PHP a Slim s MariaDB. Součástí jeho technologií jsou i WebSockets.",
+      "ja": "PHP、Slim、MariaDBを組み合わせ、技術スタックにはWebSocketsも含まれています。"
+    },
+    "demo": "https://buffet.vlastas.cc/",
+    "source": "https://github.com/Web-Projekty/buffet-rezervace",
+    "action": "visit",
+    "unavailable": false
+  },
+  {
+    "id": "lylink",
+    "name": "LyLink",
+    "order": 1,
+    "category": "web",
+    "featured": true,
+    "technologies": [
+      "PHP",
+      "TypeScript",
+      "Twig",
+      "SQLite"
+    ],
+    "description": {
+      "en": "A multiplatform lyrics tracker that allows you to sync your lyrics live with the music you're listening to.",
+      "cs": "Multiplatformní nástroj, který umožňuje synchronizovat texty v reálném čase s přehrávanou hudbou.",
+      "ja": "音楽を再生している間に歌詞をリアルタイムで同期できるマルチプラットフォーム歌詞トラッカー。"
+    },
+    "purpose": {
+      "en": "Follow lyrics alongside the music you are playing. LyLink is a multiplatform tool for synchronizing lyrics with live playback.",
+      "cs": "Sledovat text spolu s přehrávanou hudbou. LyLink je multiplatformní nástroj pro synchronizaci textů s přehráváním.",
+      "ja": "再生中の音楽に合わせて歌詞を追えるようにする、マルチプラットフォームの歌詞同期ツールです。"
+    },
+    "approach": {
+      "en": "PHP, Twig, and SQLite form the application stack, with TypeScript on the frontend. A separate companion project adds Jellyfin integration.",
+      "cs": "Základ aplikace tvoří PHP, Twig a SQLite, frontend využívá TypeScript. Samostatný doprovodný projekt přidává integraci s Jellyfinem.",
+      "ja": "PHP、Twig、SQLiteを基盤とし、フロントエンドではTypeScriptを使用しています。別の連携プロジェクトでJellyfinにも対応します。"
+    },
+    "demo": "https://lylink.vlastas.cc/",
+    "source": "https://github.com/wlczak/LyLink",
+    "action": "visit",
+    "unavailable": false
+  },
+  {
+    "id": "platformer",
+    "name": "2D platformer",
+    "order": 2,
+    "category": "games",
+    "featured": false,
+    "technologies": [
+      "Java",
+      "Java Swing"
+    ],
+    "description": {
+      "en": "A 2D platformer game made with Java swing.",
+      "cs": "2D plošinovka vytvořená pomocí Java Swing.",
+      "ja": "Java Swingで作られた2Dプラットフォームゲーム。"
+    },
+    "purpose": {
+      "en": "A small game project exploring a two-dimensional platformer through Java's desktop UI toolkit.",
+      "cs": "Malý herní projekt zkoumající 2D plošinovku s využitím desktopového rozhraní Javy.",
+      "ja": "JavaのデスクトップUIツールキットで作った、小さな2Dプラットフォームゲームです。"
+    },
+    "approach": {
+      "en": "Built with Java and Swing. The linked release is a downloadable JAR; the source repository is also available.",
+      "cs": "Vytvořeno v Javě a Swingu. Odkazované vydání je ke stažení jako JAR, dostupný je i zdrojový repozitář.",
+      "ja": "JavaとSwingで作成されています。リンク先のリリースはJARとしてダウンロードでき、ソースコードも公開されています。"
+    },
+    "demo": "https://github.com/Web-Projekty/vap-projekt/releases/download/0.2.1-beta/0.2.1-beta.jar",
+    "source": "https://github.com/Web-projekty/vap-projekt",
+    "action": "download",
+    "unavailable": false
+  },
+  {
+    "id": "menu",
+    "name": "Menu",
+    "order": 3,
+    "category": "hardware",
+    "featured": false,
+    "technologies": [
+      "C/C++",
+      "Arduino libs",
+      "LiquidCrystal I2C library"
+    ],
+    "description": {
+      "en": "Modular menu library designed for I2C LCD displays. (Tested on 16x2 and 20x4 displays)",
+      "cs": "Modulární knihovna menu navržená pro I2C LCD displeje. (Testováno na 16x2 a 20x4 displejích)",
+      "ja": "I2C LCDディスプレイ向けに設計されたモジュール式メニューライブラリ。（16x2と20x4でテスト済み）"
+    },
+    "purpose": {
+      "en": "Give embedded projects a modular menu on a small I2C LCD. The library has been tested on both 16×2 and 20×4 displays.",
+      "cs": "Modulární menu pro embedded projekty s malým I2C LCD. Knihovna byla testována na displejích 16×2 i 20×4.",
+      "ja": "小型のI2C LCDを使う組み込みプロジェクト向けのモジュール式メニューです。16×2と20×4のディスプレイでテストされています。"
+    },
+    "approach": {
+      "en": "Built with C/C++, Arduino libraries, and LiquidCrystal I2C. A separate release is being prepared, so a public source link is not available yet.",
+      "cs": "Využívá C/C++, Arduino knihovny a LiquidCrystal I2C. Samostatné vydání se připravuje, veřejný odkaz na zdrojový kód zatím není dostupný.",
+      "ja": "C/C++、Arduinoライブラリ、LiquidCrystal I2Cを使用しています。独立したリリースを準備中のため、ソースへの公開リンクはまだありません。"
+    },
+    "source": "https://github.com/Wlczak/Menu",
+    "action": "visit",
+    "unavailable": true
+  },
+  {
+    "id": "lylink-jellyfin",
+    "name": "LyLink-jellyfin",
+    "order": 4,
+    "category": "web",
+    "featured": false,
+    "technologies": [
+      "Go",
+      "Fyne"
+    ],
+    "description": {
+      "en": "A lyllink plugin app for jellyfin integration. Enables live playback sync with the popular streaming service jellyfin.",
+      "cs": "Nezávislý plugin aplikace LyLink pro živou synchronizaci přehrávání s serverem Jellyfin.",
+      "ja": "Jellyfin統合のためのLyLinkプラグインアプリ。再生の同期を可能にします。"
+    },
+    "purpose": {
+      "en": "Connect Jellyfin playback to LyLink so the lyrics can follow the music playing on a Jellyfin server.",
+      "cs": "Propojit přehrávání na Jellyfinu s LyLinkem, aby texty mohly sledovat hudbu přehrávanou na serveru.",
+      "ja": "Jellyfinでの再生をLyLinkにつなぎ、サーバーで再生されている音楽に歌詞を同期させるための連携アプリです。"
+    },
+    "approach": {
+      "en": "The companion application uses Go and Fyne. Its releases and source are linked separately from the main LyLink project.",
+      "cs": "Doprovodná aplikace využívá Go a Fyne. Vydání a zdrojový kód mají vlastní odkazy oddělené od hlavního projektu LyLink.",
+      "ja": "連携アプリはGoとFyneを使用しています。リリースとソースコードは本体のLyLinkとは別に公開されています。"
+    },
+    "demo": "https://github.com/Wlczak/lylink-jellyfin/releases/latest",
+    "source": "https://github.com/Wlczak/lylink-jellyfin/",
+    "action": "download",
+    "unavailable": false
+  },
+  {
+    "id": "jshort",
+    "name": "JShort",
+    "order": 5,
+    "category": "web",
+    "featured": false,
+    "technologies": [
+      "Java",
+      "Spring Boot",
+      "SQLite"
+    ],
+    "description": {
+      "en": "Simple url shortnener app written in Java spring boot.",
+      "cs": "Jednoduchá aplikace pro zkracování URL napsaná v Java Spring Boot.",
+      "ja": "Java Spring Bootで書かれたシンプルなURL短縮アプリ。"
+    },
+    "purpose": {
+      "en": "Turn a long URL into a shorter link. JShort explores this familiar web utility with Java and Spring Boot.",
+      "cs": "Proměnit dlouhou URL v kratší odkaz. JShort je jednoduchý webový nástroj postavený na Javě a Spring Bootu.",
+      "ja": "長いURLを短いリンクにするシンプルなウェブツールです。JavaとSpring Bootを使用しています。"
+    },
+    "approach": {
+      "en": "A Java Spring Boot application with SQLite in its stack. Both the website and source repository are linked below.",
+      "cs": "Aplikace v Javě se Spring Bootem a SQLite. Níže jsou odkazy na web i zdrojový repozitář.",
+      "ja": "JavaのSpring Bootアプリで、SQLiteを使用しています。ウェブサイトとソースコードへのリンクを掲載しています。"
+    },
+    "demo": "https://jshort.vlastas.cc/",
+    "source": "https://github.com/Wlczak/jshort",
+    "action": "visit",
+    "unavailable": false
+  },
+  {
+    "id": "tanks",
+    "name": "Tanks",
+    "order": 6,
+    "category": "games",
+    "featured": true,
+    "technologies": [
+      "Go",
+      "TypeScript",
+      "WebSockets"
+    ],
+    "description": {
+      "en": "Tank Trouble inspired game with full multiplayer implementation coming someday.",
+      "cs": "Hra inspirovaná webovou hrou Tank Trouble s plánovaným multiplayerem.",
+      "ja": "tankTroubleに触発されたゲームで、いつかフルマルチプレイヤー実装予定。"
+    },
+    "purpose": {
+      "en": "A browser game inspired by Tank Trouble. Full multiplayer is a planned feature, rather than a completed capability.",
+      "cs": "Prohlížečová hra inspirovaná Tank Trouble. Plný multiplayer je plánovaná funkce, ne dokončená schopnost.",
+      "ja": "Tank Troubleに着想を得たブラウザーゲームです。完全なマルチプレイヤー機能は今後の予定です。"
+    },
+    "approach": {
+      "en": "Go, TypeScript, and WebSockets make up the stack. The playable site and repository provide two ways to explore the experiment.",
+      "cs": "Použité technologie jsou Go, TypeScript a WebSockets. Experiment lze prozkoumat na herním webu i ve zdrojovém repozitáři.",
+      "ja": "Go、TypeScript、WebSocketsを使用しています。プレイできるサイトとリポジトリから、この実験を探索できます。"
+    },
+    "demo": "https://tanks.vlastas.cc/",
+    "source": "https://github.com/Wlczak/go-tanks",
+    "action": "play",
+    "unavailable": false
+  },
+  {
+    "id": "blogfinity",
+    "name": "Blogfinity",
+    "order": 7,
+    "category": "web",
+    "featured": false,
+    "technologies": [
+      "Go",
+      "WebSockets",
+      "SQLite",
+      "JavaScript"
+    ],
+    "description": {
+      "en": "A never-ending supply of low quality AI generated articles. Now with more than 5% of uptime.",
+      "cs": "Nekonečná záplava nekvalitních AI generovaných článků. Nově s uptimem přesahujícím 5%.",
+      "ja": "低品質なAI生成記事が無限に供給されるブログ。現在、稼働時間は 5% を超えています。"
+    },
+    "purpose": {
+      "en": "An intentionally tongue-in-cheek experiment with an endless stream of AI-generated articles.",
+      "cs": "Záměrně odlehčený experiment s nekonečným proudem článků generovaných AI.",
+      "ja": "AI生成の記事が延々と続く、遊び心のある実験的なプロジェクトです。"
+    },
+    "approach": {
+      "en": "The stack combines Go, WebSockets, SQLite, and JavaScript. The project is included here as an experiment, with links to its site and source.",
+      "cs": "Technologie kombinují Go, WebSockets, SQLite a JavaScript. Projekt je zde jako experiment s odkazy na web a zdrojový kód.",
+      "ja": "Go、WebSockets、SQLite、JavaScriptを組み合わせています。実験的な作品として、サイトとソースコードを紹介しています。"
+    },
+    "demo": "https://blogfinity.vlastas.cc/",
+    "source": "https://github.com/Wlczak/blogfinity",
+    "action": "visit",
+    "unavailable": false
+  },
+  {
+    "id": "gamelist",
+    "name": "GameList",
+    "order": 8,
+    "category": "web",
+    "featured": false,
+    "technologies": [
+      "PHP",
+      "JavaScript",
+      "MariaDB"
+    ],
+    "description": {
+      "en": "A gamified todo list.",
+      "cs": "Gamifikovaný úkolníček.",
+      "ja": "ゲーミフィケーションされたToDoリスト。"
+    },
+    "purpose": {
+      "en": "Make a to-do list feel more like a game. GameList is a small exploration of gamified task tracking.",
+      "cs": "Přiblížit úkolníček hře. GameList je malý experiment s gamifikovaným sledováním úkolů.",
+      "ja": "タスクリストをゲームのようにする、ゲーミフィケーションを取り入れた小さなプロジェクトです。"
+    },
+    "approach": {
+      "en": "Built with PHP, JavaScript, and MariaDB. The website and source are available for exploring the project.",
+      "cs": "Vytvořeno s PHP, JavaScriptem a MariaDB. Projekt lze prozkoumat na webu i ve zdrojovém kódu.",
+      "ja": "PHP、JavaScript、MariaDBで作られています。サイトとソースコードからプロジェクトを探索できます。"
+    },
+    "demo": "https://gamelist.vlastas.cc/",
+    "source": "https://github.com/Wlczak/gamelist",
+    "action": "visit",
+    "unavailable": false
+  }
+]

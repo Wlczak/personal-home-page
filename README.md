@@ -42,6 +42,13 @@ executable from the repository root, or set `SITE_DIR` to an absolute build path
 - Essential content is prerendered and works without JavaScript. Interactivity
   includes project search/filtering, a Ctrl/Cmd+K command palette, and a persisted
   light/dark theme. Reduced-motion preferences disable animation.
+- Click the illustrated computer to open a portfolio terminal. It supports
+  `ls` (`-a`, `-l`), `cd`, `pwd`, `cat` (`-n`), `echo`, `whoami`, `hostname`,
+  `uname`, `date`, `history`, `clear`, and `help`. The read-only virtual filesystem
+  starts at `/home/adam` and contains localized biography and project files.
+  Paths support `/`, `~`, `.`, and `..`; `cd -` returns to the previous directory.
+  Quoted arguments and escaped spaces work. Commands run in the browser;
+  pipes, redirection, command chaining, and host filesystem access are unsupported.
 
 ## Checks
 

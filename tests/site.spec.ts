@@ -72,6 +72,58 @@ test('content and navigation work without JavaScript', async ({ browser, baseURL
   await context.close();
 });
 
+test('terminal commands navigate and read the portfolio filesystem', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Click to type into the computer' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Computer terminal' });
+  const editor = dialog.getByRole('textbox', { name: 'Terminal input' });
+  const output = dialog.locator('.terminal-output');
+  async function run(command: string, expected?: string) {
+    await editor.fill(command);
+    await editor.press('Enter');
+    if (expected) await expect(output.last()).toContainText(expected);
+    await expect(editor).toHaveValue('');
+  }
+  await run('pwd', '/home/adam');
+  await run('ls', 'interests.txt');
+  await expect(output.last()).not.toContainText('.profile');
+  await run('ls -al', '.profile');
+  await run('cat interests.txt', 'backend / games / hardware');
+  await run('cd projects');
+  await run('pwd', '/home/adam/projects');
+  await run('cat buffet.txt', 'Buffet');
+  await run('cd ..');
+  await run('cd /');
+  await run('ls', 'home/');
+  await run('cd ~');
+  await run('cat ./projects/../interests.txt', 'backend / games / hardware');
+  await run('cd projects');
+  await run('cd -', '/home/adam');
+  await run('cd missing', 'No such file or directory');
+  await run('pwd', '/home/adam');
+  await run('cd about.txt', 'Not a directory');
+  await run('cat projects', 'Is a directory');
+  await run('cat missing interests.txt', 'backend / games / hardware');
+  await expect(output.last()).toContainText('No such file or directory');
+  await run('echo "<img src=x onerror=alert(1)>"', '<img src=x onerror=alert(1)>');
+  await expect(output.locator('img')).toHaveCount(0);
+  await run("echo 'hello world'", 'hello world');
+  await run('echo "unfinished', 'unclosed quote');
+  await run('whoami', 'adam');
+  await run('help', 'read-only portfolio shell');
+  await run('unknown', 'command not found');
+  await run('history', '1  pwd');
+  await run('clear');
+  await expect(output).toHaveCount(0);
+  await expect(dialog.locator('.terminal-line')).toHaveCount(0);
+  await expect(dialog.locator('.terminal-history')).toBeHidden();
+  await run('pwd', '/home/adam');
+  await editor.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await page.getByRole('button', { name: 'Click to type into the computer' }).click();
+  await run('cat interests.txt', 'backend / games / hardware');
+});
+
 test('computer opens a fullscreen CLI, accepts typing and restores the page on exit', async ({ page }) => {
   for (const mobile of [false, true]) {
     await page.setViewportSize(mobile ? {width:390,height:844} : {width:1280,height:900});

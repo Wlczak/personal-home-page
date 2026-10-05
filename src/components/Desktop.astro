@@ -7,7 +7,7 @@ const t = messages[locale];
 <div class="desktop-art">
   <span class="spark spark-one" aria-hidden="true">✳</span><span class="spark spark-two" aria-hidden="true">+</span>
   <div class="art-sticker mono" aria-hidden="true">HELLO, WORLD!</div>
-  <div class="computer" data-computer>
+  <div class="computer" data-computer data-locale={locale}>
     <button type="button" class="computer-activate" aria-label={t.computerActivate} aria-controls="computer-input" hidden></button>
     <div class="monitor"><div class="screen">
       <div class="screen-menu"><span aria-hidden="true">adam@localhost</span><span class="screen-idle-icon" aria-hidden="true">▣</span><button type="button" class="computer-close" aria-label={t.close} hidden><span aria-hidden="true">ESC ×</span></button></div>
@@ -27,7 +27,11 @@ const t = messages[locale];
 </div>
 
 <script>
+  import { createTerminal } from '../lib/terminal';
+  import type { Locale } from '../lib/i18n';
+
   document.querySelectorAll<HTMLElement>('[data-computer]').forEach(computer => {
+    const shell = createTerminal(computer.dataset.locale as Locale);
     const activate = computer.querySelector<HTMLButtonElement>('.computer-activate');
     const idlePrompt = computer.querySelector<HTMLElement>('.terminal-idle-prompt');
     const entry = computer.querySelector<HTMLElement>('.terminal-entry');
@@ -108,10 +112,23 @@ const t = messages[locale];
       prompt.setAttribute('aria-hidden', 'true');
       prompt.textContent = '$';
       const value = document.createElement('span');
-      // Submitted text is inert, read-only history, never HTML or a command.
+      // Render commands and output as text, never HTML.
       value.textContent = editor!.value;
       line.append(prompt, value);
       transcript!.append(line);
+      const result = shell.execute(editor!.value);
+      if (result.clear) {
+        transcript!.replaceChildren();
+        computer.querySelector<HTMLElement>('.terminal-history')!.hidden = true;
+      }
+      if (result.output) {
+        const output = document.createElement('div');
+        output.className = 'terminal-output';
+        output.style.whiteSpace = 'pre-wrap';
+        output.style.overflowWrap = 'anywhere';
+        output.textContent = result.output;
+        transcript!.append(output);
+      }
       if (editor!.value) history.push(editor!.value);
       editor!.value = '';
       historyIndex = history.length;

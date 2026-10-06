@@ -18,6 +18,16 @@
 .computer-activate{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;border-radius:15px;background:transparent;cursor:pointer}
 .computer-activate:focus-visible{outline:3px solid var(--accent);outline-offset:8px}
 .terminal-entry{display:flex;align-items:flex-start;gap:.7ch}
+.terminal-input-wrap{position:relative;flex:1;min-width:0}
+.terminal-ghost{position:absolute;inset:0 0 auto;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none;font:inherit}
+.terminal-ghost-prefix{visibility:hidden}
+.terminal-suggestion{opacity:.5}
+.terminal-editor{position:relative;white-space:pre-wrap;overflow-wrap:anywhere}
+.terminal-completions{display:flex;flex-wrap:wrap;gap:.25em .75em;list-style:none;margin:.3em 0 .6em;padding:0 0 0 1.7ch;font:inherit}
+.terminal-completions button{font:inherit;color:inherit;padding:0 .25em;border:1px solid transparent;border-radius:2px}
+.terminal-completions button[aria-pressed=true]{background:#426653;border-color:#7d9884}
+.terminal-completions button:focus-visible{outline:2px solid #e4bf78;outline-offset:2px}
+.computer:not([data-active=true]) .terminal-completions{display:none}
 .terminal-line{display:flex;align-items:flex-start;gap:.7ch;min-height:1.8em}
 .terminal-line>span:last-child{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .terminal-editor{display:block;box-sizing:border-box;flex:1;min-width:0;width:100%;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;caret-color:#e4bf78;font:inherit;resize:none;overflow:hidden}

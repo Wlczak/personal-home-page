@@ -5,6 +5,8 @@ import type { Locale } from './i18n';
 const home = '/home/adam';
 type Node = { type: 'directory' } | { type: 'file'; content: string };
 export interface CommandResult { output: string; clear?: boolean }
+export interface Completion { label: string; value: string }
+const commands = ['cat', 'cd', 'clear', 'date', 'echo', 'help', 'history', 'hostname', 'ls', 'pwd', 'uname', 'whoami'];
 
 // A portfolio filesystem in memory: commands never access the host machine.
 export function createTerminal(locale: Locale = 'en') {
@@ -148,5 +150,53 @@ export function createTerminal(locale: Locale = 'en') {
       return { output: `${command}: ${(error as Error).message}` };
     }
   }
-  return { execute };
+  function complete(line: string): Completion[] {
+    // Parse unfinished input without requiring a closing quote.
+    const words: string[] = [];
+    let word = '', quote = '', start = 0, active = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (!active && !/\s/.test(char)) { start = i; active = true; }
+      if (char === '\\' && quote !== "'") {
+        if (i + 1 < line.length) word += line[++i];
+      } else if (quote) {
+        if (char === quote) quote = '';
+        else word += char;
+      } else if (char === '"' || char === "'") quote = char;
+      else if (/\s/.test(char)) {
+        if (active) words.push(word);
+        word = ''; active = false; start = i + 1;
+      } else word += char;
+    }
+    const prefix = line.slice(0, start);
+    const openingQuote = /^["']/.exec(line.slice(start))?.[0];
+    const encode = (value: string) => openingQuote
+      ? openingQuote + value + (value.endsWith('/') ? '' : openingQuote)
+      : value.replace(/[\s\\"']/g, '\\$&');
+    if (!words.length) return commands.filter(command => command.startsWith(word))
+      .map(command => ({ label: command, value: prefix + encode(command) }));
+    if (!['cat', 'cd', 'ls'].includes(words[0]) || word.startsWith('-')) return [];
+    const slash = word.lastIndexOf('/');
+    const parent = word.slice(0, slash + 1);
+    const basename = word.slice(slash + 1);
+    const directory = resolve(parent || '.');
+    if (files.get(directory)?.type !== 'directory') return [];
+    const directoryPrefix = directory === '/' ? '/' : directory + '/';
+    return Array.from(files.entries()).flatMap(([path, node]) => {
+      if (!path.startsWith(directoryPrefix)) return [];
+      const name = path.slice(directoryPrefix.length);
+      if (!name || name.includes('/') || !name.startsWith(basename)) return [];
+      if (name.startsWith('.') && !basename.startsWith('.')) return [];
+      if (words[0] === 'cd' && node.type !== 'directory') return [];
+      const label = parent + name + (node.type === 'directory' ? '/' : '');
+      return [{ label, value: prefix + encode(label) }];
+    }).sort((a, b) => a.label.localeCompare(b.label));
+  }
+  function suggest(line: string) {
+    if (!line.trim()) return '';
+    const match = history.findLast(entry => entry.startsWith(line) && entry !== line);
+    if (match) return match;
+    return complete(line).find(option => option.value.startsWith(line) && option.value !== line)?.value ?? '';
+  }
+  return { execute, complete, suggest };
 }

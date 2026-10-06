@@ -49,6 +49,10 @@ executable from the repository root, or set `SITE_DIR` to an absolute build path
   Paths support `/`, `~`, `.`, and `..`; `cd -` returns to the previous directory.
   Quoted arguments and escaped spaces work. Commands run in the browser;
   pipes, redirection, command chaining, and host filesystem access are unsupported.
+  Fish-style suggestions appear at half opacity, preferring the latest matching
+  command in session history. Right Arrow at the end of the line accepts the
+  suggestion. Tab cycles matching commands or filesystem paths, Shift+Tab cycles
+  backward, and matching options appear below the input and can be clicked.
 
 ## Checks
 

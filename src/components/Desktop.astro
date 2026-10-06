@@ -15,7 +15,8 @@ const t = messages[locale];
         <div class="terminal-history" aria-hidden="true"><span class="terminal-comment">// a work in progress</span><br /><span class="terminal-prompt">$</span> whoami<br /><strong>Adam Vlček</strong><br /><span class="terminal-prompt">$</span> cat interests.txt<br /><span>backend / games / hardware</span></div>
         <div class="terminal-idle-prompt" aria-hidden="true"><span class="terminal-prompt">$</span> <span class="cursor">▌</span></div>
         <div class="terminal-transcript" role="log" aria-label={t.computerTerminal} aria-live="polite" hidden></div>
-        <div class="terminal-entry" hidden><span class="terminal-prompt" aria-hidden="true">$</span><textarea id="computer-input" class="terminal-editor" aria-label={t.terminalInput} rows="1" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div>
+        <div class="terminal-entry" hidden><span class="terminal-prompt" aria-hidden="true">$</span><div class="terminal-input-wrap"><div class="terminal-ghost" aria-hidden="true"><span class="terminal-ghost-prefix"></span><span class="terminal-suggestion"></span></div><textarea id="computer-input" class="terminal-editor" aria-label={t.terminalInput} rows="1" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div></div>
+        <ul class="terminal-completions" aria-label="Completion options" hidden></ul>
       </div>
       <div class="screen-status" aria-hidden="true"><span>Go + Astro</span><span>● {t.location}</span></div>
     </div><div class="monitor-footer" aria-hidden="true"><span>AV / 01</span><span class="power-light"></span></div></div>
@@ -27,7 +28,7 @@ const t = messages[locale];
 </div>
 
 <script>
-  import { createTerminal } from '../lib/terminal';
+  import { createTerminal, type Completion } from '../lib/terminal';
   import type { Locale } from '../lib/i18n';
 
   document.querySelectorAll<HTMLElement>('[data-computer]').forEach(computer => {
@@ -37,6 +38,12 @@ const t = messages[locale];
     const entry = computer.querySelector<HTMLElement>('.terminal-entry');
     const editor = computer.querySelector<HTMLTextAreaElement>('.terminal-editor');
     const transcript = computer.querySelector<HTMLElement>('.terminal-transcript');
+    const ghost = computer.querySelector<HTMLElement>('.terminal-ghost')!;
+    const ghostPrefix = computer.querySelector<HTMLElement>('.terminal-ghost-prefix')!;
+    const suggestion = computer.querySelector<HTMLElement>('.terminal-suggestion')!;
+    const completions = computer.querySelector<HTMLUListElement>('.terminal-completions')!;
+    let completionCycle: { options: Completion[]; index: number } | null = null;
+    let suggestedValue = '';
     const close = computer.querySelector<HTMLButtonElement>('.computer-close');
     const icon = computer.querySelector<HTMLElement>('.screen-idle-icon');
     const parent = computer.parentElement;
@@ -97,7 +104,36 @@ const t = messages[locale];
     }
     function resizeInput() {
       editor!.style.height = 'auto';
-      editor!.style.height = `${editor!.scrollHeight}px`;
+      editor!.style.height = `${Math.max(editor!.scrollHeight, ghost.scrollHeight)}px`;
+    }
+    function atEnd() {
+      return editor!.selectionStart === editor!.value.length && editor!.selectionEnd === editor!.value.length;
+    }
+    function refreshSuggestions(reset = true) {
+      if (reset) completionCycle = null;
+      suggestedValue = atEnd() ? shell.suggest(editor!.value) : '';
+      ghostPrefix.textContent = suggestedValue ? editor!.value : '';
+      suggestion.textContent = suggestedValue.slice(editor!.value.length);
+      const options = atEnd() ? completionCycle?.options ?? (editor!.value ? shell.complete(editor!.value) : []) : [];
+      completions.replaceChildren();
+      completions.hidden = options.length === 0;
+      options.forEach((option, index) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = option.label;
+        button.setAttribute('aria-pressed', String(completionCycle?.index === index));
+        button.addEventListener('click', () => {
+          editor!.value = option.value;
+          editor!.focus();
+          editor!.setSelectionRange(option.value.length, option.value.length);
+          refreshSuggestions();
+          updateInput();
+        });
+        item.append(button);
+        completions.append(item);
+      });
+      resizeInput();
     }
     function updateInput() {
       resizeInput();
@@ -133,11 +169,32 @@ const t = messages[locale];
       editor!.value = '';
       historyIndex = history.length;
       draft = '';
+      refreshSuggestions();
       updateInput();
     }
     editor.addEventListener('keydown', event => {
       if (event.isComposing || event.key === 'Process') return;
-      if (event.key === 'Enter') {
+      if (event.key === 'Tab' && !event.ctrlKey && !event.altKey && !event.metaKey && atEnd()) {
+        const options = completionCycle?.options ?? shell.complete(editor.value);
+        if (!options.length) return;
+        event.preventDefault();
+        const index = completionCycle
+          ? (completionCycle.index + (event.shiftKey ? -1 : 1) + options.length) % options.length
+          : event.shiftKey ? options.length - 1 : 0;
+        completionCycle = { options, index };
+        editor.value = options[index].value;
+        editor.setSelectionRange(editor.value.length, editor.value.length);
+        historyIndex = history.length;
+        refreshSuggestions(false);
+        updateInput();
+      } else if (event.key === 'ArrowRight' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && atEnd() && suggestedValue) {
+        event.preventDefault();
+        editor.value = suggestedValue;
+        editor.setSelectionRange(editor.value.length, editor.value.length);
+        historyIndex = history.length;
+        refreshSuggestions();
+        updateInput();
+      } else if (event.key === 'Enter') {
         event.preventDefault();
         submitLine();
       } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
@@ -146,6 +203,7 @@ const t = messages[locale];
         historyIndex = Math.max(0, Math.min(history.length, historyIndex + (event.key === 'ArrowUp' ? -1 : 1)));
         editor.value = historyIndex === history.length ? draft : history[historyIndex];
         editor.setSelectionRange(editor.value.length, editor.value.length);
+        refreshSuggestions();
         updateInput();
       }
     });
@@ -161,7 +219,23 @@ const t = messages[locale];
       // Pasted newlines become spaces rather than silently submitting lines.
       editor.value = editor.value.replace(/[\r\n]+/g, ' ');
       historyIndex = history.length;
+      refreshSuggestions();
       updateInput();
+    });
+    editor.addEventListener('click', () => refreshSuggestions());
+    editor.addEventListener('compositionstart', () => {
+      completionCycle = null;
+      suggestedValue = '';
+      ghostPrefix.textContent = '';
+      suggestion.textContent = '';
+      completions.hidden = true;
+    });
+    editor.addEventListener('compositionend', () => {
+      refreshSuggestions();
+      updateInput();
+    });
+    editor.addEventListener('keyup', event => {
+      if (['ArrowLeft', 'Home', 'End', 'ArrowRight'].includes(event.key)) refreshSuggestions();
     });
     activate.hidden = false;
     activate.addEventListener('click', () => {

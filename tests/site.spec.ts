@@ -110,7 +110,7 @@ test('terminal commands navigate and read the portfolio filesystem', async ({ pa
   await run("echo 'hello world'", 'hello world');
   await run('echo "unfinished', 'unclosed quote');
   await run('whoami', 'adam');
-  await run('help', 'read-only portfolio shell');
+  await run('help', 'simulated portfolio shell');
   await run('unknown', 'command not found');
   await run('history', '1  pwd');
   await run('clear');

@@ -78,6 +78,32 @@ func TestStaticServer(t *testing.T) {
 			t.Fatal("HEAD returned a body")
 		}
 	}
+	for _, test := range []struct {
+		name, method, encoding string
+	}{
+		{"get", http.MethodGet, ""},
+		{"gzip", http.MethodGet, "gzip"},
+		{"head", http.MethodHead, ""},
+	} {
+		t.Run("sitemap_content_type_"+test.name, func(t *testing.T) {
+			request := httptest.NewRequest(test.method, "/sitemap.xml", nil)
+			request.Header.Set("Accept-Encoding", test.encoding)
+			response := httptest.NewRecorder()
+			router.ServeHTTP(response, request)
+			if response.Code != http.StatusOK {
+				t.Fatalf("status %d, want 200", response.Code)
+			}
+			if got := response.Header().Get("Content-Type"); got != "application/xml; charset=utf-8" {
+				t.Fatalf("Content-Type %q, want application/xml; charset=utf-8", got)
+			}
+			if test.method == http.MethodHead && response.Body.Len() != 0 {
+				t.Fatal("HEAD returned a body")
+			}
+			if test.encoding == "gzip" && response.Header().Get("Content-Encoding") != "gzip" {
+				t.Fatal("missing gzip")
+			}
+		})
+	}
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, httptest.NewRequest(http.MethodPost, "/about/", nil))
 	if response.Code != http.StatusMethodNotAllowed {

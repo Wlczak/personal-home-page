@@ -28,6 +28,23 @@
 .terminal-completions button[aria-pressed=true]{background:#426653;border-color:#7d9884}
 .terminal-completions button:focus-visible{outline:2px solid #e4bf78;outline-offset:2px}
 .computer:not([data-active=true]) .terminal-completions{display:none}
+.terminal-completion-pages{display:flex;align-items:center;flex-wrap:wrap;gap:.5em 1em;padding-left:1.7ch;margin-bottom:.6em;font-size:.8em}
+.terminal-completion-pages button{font:inherit;color:inherit;border:1px solid #7d9884;border-radius:2px;padding:.1em .5em}
+.terminal-completion-pages button:disabled{opacity:.4;cursor:default}
+.terminal-completion-pages button:focus-visible{outline:2px solid #e4bf78;outline-offset:2px}
+.computer:not([data-active=true]) .terminal-completion-pages{display:none}
+.terminal[data-editing=true]>:not(.nano-editor){display:none!important}
+.nano-editor{display:flex;flex-direction:column;gap:.6em;min-height:100%;font:inherit}
+.nano-header{display:flex;justify-content:space-between;gap:1em;padding:.2em .5em;background:#cedabe;color:#203c31}
+.nano-filename{min-width:0;overflow-wrap:anywhere}
+.nano-modified{flex-shrink:0}
+.nano-input{flex:1;width:100%;min-height:45dvh;resize:none;border:0;border-radius:0;padding:.3em;margin:0;background:transparent;color:inherit;font:inherit;tab-size:2}
+.nano-input:focus-visible{outline:1px solid #7d9884;outline-offset:0}
+.nano-status{font-size:.8em;overflow-wrap:anywhere}
+.nano-shortcuts,.nano-confirm{display:flex;flex-wrap:wrap;gap:.5em 1em}
+.nano-shortcuts button,.nano-confirm button{font:inherit;color:inherit;border:1px solid #7d9884;border-radius:2px;padding:.15em .5em}
+.nano-shortcuts button:focus-visible,.nano-confirm button:focus-visible{outline:2px solid #e4bf78;outline-offset:2px}
+.computer:not([data-active=true]) .nano-editor{display:none}
 .terminal-line{display:flex;align-items:flex-start;gap:.7ch;min-height:1.8em}
 .terminal-line>span:last-child{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .terminal-editor{display:block;box-sizing:border-box;flex:1;min-width:0;width:100%;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;caret-color:#e4bf78;font:inherit;resize:none;overflow:hidden}

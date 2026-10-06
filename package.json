@@ -14,6 +14,7 @@
     "check": "astro check",
     "test:e2e": "playwright test",
     "test:dev": "node --test tests/dev.test.mjs",
+    "test:terminal": "node --test tests/terminal.test.mjs",
     "audit": "node scripts/audit.mjs"
   },
   "dependencies": {

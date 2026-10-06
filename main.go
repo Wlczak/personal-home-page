@@ -168,6 +168,11 @@ func newRouter(siteDir string) (*gin.Engine, error) {
 		if strings.HasPrefix(name, "_astro/") {
 			c.Header("Cache-Control", "public, max-age=31536000, immutable")
 		}
+		// Prerendered routes lose Astro's response headers. Set XML explicitly
+		// so ServeContent cannot fall back to text/plain via MIME sniffing.
+		if path.Ext(name) == ".xml" {
+			c.Header("Content-Type", "application/xml; charset=utf-8")
+		}
 		if missing {
 			c.Header("Content-Type", "text/html; charset=utf-8")
 			c.Header("Cache-Control", "no-store")

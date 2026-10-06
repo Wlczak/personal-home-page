@@ -43,9 +43,19 @@ executable from the repository root, or set `SITE_DIR` to an absolute build path
   includes project search/filtering, a Ctrl/Cmd+K command palette, and a persisted
   light/dark theme. Reduced-motion preferences disable animation.
 - Click the illustrated computer to open a portfolio terminal. It supports
-  `ls` (`-a`, `-l`), `cd`, `pwd`, `cat` (`-n`), `echo`, `whoami`, `hostname`,
-  `uname`, `date`, `history`, `clear`, and `help`. The read-only virtual filesystem
+  navigation and editing (`ls`, `cd`, `pwd`, `cat`, `nano`), filesystem operations
+  (`mkdir`, `touch`, `cp`, `mv`, `rm`, `rmdir`), search (`find`, `tree`, `grep`),
+  text utilities (`head`, `tail`, `wc`, `sort`, `uniq`, `diff`), file information
+  (`file`, `stat`, `du`, `basename`, `dirname`), and session utilities (`echo`,
+  `whoami`, `id`, `hostname`, `uname`, `date`, `env`, `printenv`, `seq`, `type`,
+  `which`, `history`, `clear`, `man`, `help`). `help` lists the supported flags;
+  `man command` shows that command’s usage. The virtual filesystem
   starts at `/home/adam` and contains localized biography and project files.
+  The Linux-style root layout includes `/bin`, `/boot`, `/dev`, `/etc`, `/home`,
+  `/lib`, `/lib64`, `/media`, `/mnt`, `/opt`, `/proc`, `/root`, `/run`, `/sbin`,
+  `/srv`, `/sys`, `/tmp`, `/usr`, and `/var`. Explore system information in
+  `/etc/os-release`, `/etc/hosts`, `/etc/motd`, and `/proc/version`; `/bin`
+  contains descriptions of the available virtual commands.
   Paths support `/`, `~`, `.`, and `..`; `cd -` returns to the previous directory.
   Quoted arguments and escaped spaces work. Commands run in the browser;
   pipes, redirection, command chaining, and host filesystem access are unsupported.
@@ -53,11 +63,51 @@ executable from the repository root, or set `SITE_DIR` to an absolute build path
   command in session history. Right Arrow at the end of the line accepts the
   suggestion. Tab cycles matching commands or filesystem paths, Shift+Tab cycles
   backward, and matching options appear below the input and can be clicked.
+  Down Arrow enters completion navigation; after Tab or Down Arrow, all four
+  arrow keys cycle through the options. Up Arrow otherwise browses history,
+  and Enter accepts a selected completion without running the command; press
+  Enter again to submit it. Right Arrow otherwise accepts the inline suggestion.
+  Ctrl+C cancels the
+  current input and completion selection without executing or recording it.
+  Completion suggestions show six options per page. Tab and arrow navigation
+  automatically reveal the selected option’s page. Previous/Next buttons and
+  Page Up/Page Down select the first option on the adjacent page; typing resets
+  pagination to the first page.
+  `nano [file]` opens a multiline editor (`nano` alone opens `untitled.txt`).
+  Ctrl+O saves and Ctrl+X exits, with Save/Discard/Cancel for unsaved changes.
+  Ctrl+G shows help; on-screen buttons also work on mobile. Nano can edit existing
+  files or create files in existing directories. Saved files appear in `ls`,
+  `cat`, and completion suggestions, and are kept until the page reloads.
+  System commands include `mount`, `umount`, `df`, `lsblk`, `free`, `ps`, `top`,
+  `kill`, `systemctl`, `uptime`, `dmesg`, `lscpu`, `hostnamectl`, `who`, `w`,
+  `tty`, and `groups`. These use simulated session state. For example,
+  `mount /dev/vdb1 /mnt` exposes a virtual data disk; saved files survive
+  `umount /mnt` and remounting until page reload. `mount -t tmpfs scratch /mnt`
+  creates temporary storage, discarded on unmount. Mount targets must be empty
+  directories. `mount`, `df -h`, `lsblk`, and `/proc/mounts` show current mounts.
+  `systemctl status portfolio`, `systemctl stop portfolio`, and
+  `systemctl start portfolio` update the virtual service and process table;
+  `top` prints a snapshot. These commands do not control the website or host OS.
+
+Custom commands and easter eggs can be registered through the second argument
+to `createTerminal` in `src/components/Desktop.astro`. They automatically join
+help, command completion, and history suggestions. Handlers receive arguments
+and the current directory, plus virtual `readFile` and `saveFile` helpers:
+
+```ts
+createTerminal(locale, {
+  hello: {
+    description: 'A little greeting',
+    run: (args, { cwd }) => ({ output: `Hello ${args[0] ?? 'world'} from ${cwd}!` }),
+  },
+});
+```
 
 ## Checks
 
 ```sh
 make check
+npm run test:terminal
 npx playwright install chromium
 make test
 ```

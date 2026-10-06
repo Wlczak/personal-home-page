@@ -17,6 +17,18 @@ const t = messages[locale];
         <div class="terminal-transcript" role="log" aria-label={t.computerTerminal} aria-live="polite" hidden></div>
         <div class="terminal-entry" hidden><span class="terminal-prompt" aria-hidden="true">$</span><div class="terminal-input-wrap"><div class="terminal-ghost" aria-hidden="true"><span class="terminal-ghost-prefix"></span><span class="terminal-suggestion"></span></div><textarea id="computer-input" class="terminal-editor" aria-label={t.terminalInput} rows="1" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div></div>
         <ul class="terminal-completions" aria-label="Completion options" hidden></ul>
+        <div class="terminal-completion-pages" hidden>
+          <button type="button" class="completion-previous" aria-label="Previous completion page">← Previous</button>
+          <span class="completion-page-status" role="status"></span>
+          <button type="button" class="completion-next" aria-label="Next completion page">Next →</button>
+        </div>
+        <section class="nano-editor" aria-label="Nano text editor" hidden>
+          <div class="nano-header"><span>nano</span><span class="nano-filename"></span><span class="nano-modified"></span></div>
+          <textarea class="nano-input" aria-label="File contents" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+          <div class="nano-status" role="status">Ctrl+O to save · Ctrl+X to exit</div>
+          <div class="nano-confirm" hidden><span>Save changes before exiting?</span><button type="button" data-nano="save-exit">Yes · Save</button><button type="button" data-nano="discard">No · Discard</button><button type="button" data-nano="cancel">Cancel</button></div>
+          <div class="nano-shortcuts"><button type="button" data-nano="help">^G Help</button><button type="button" data-nano="save">^O Save</button><button type="button" data-nano="exit">^X Exit</button></div>
+        </section>
       </div>
       <div class="screen-status" aria-hidden="true"><span>Go + Astro</span><span>● {t.location}</span></div>
     </div><div class="monitor-footer" aria-hidden="true"><span>AV / 01</span><span class="power-light"></span></div></div>
@@ -42,6 +54,21 @@ const t = messages[locale];
     const ghostPrefix = computer.querySelector<HTMLElement>('.terminal-ghost-prefix')!;
     const suggestion = computer.querySelector<HTMLElement>('.terminal-suggestion')!;
     const completions = computer.querySelector<HTMLUListElement>('.terminal-completions')!;
+    const pagination = computer.querySelector<HTMLElement>('.terminal-completion-pages')!;
+    const previousPage = computer.querySelector<HTMLButtonElement>('.completion-previous')!;
+    const nextPage = computer.querySelector<HTMLButtonElement>('.completion-next')!;
+    const pageStatus = computer.querySelector<HTMLElement>('.completion-page-status')!;
+    const terminal = computer.querySelector<HTMLElement>('.terminal')!;
+    const nano = computer.querySelector<HTMLElement>('.nano-editor')!;
+    const nanoInput = computer.querySelector<HTMLTextAreaElement>('.nano-input')!;
+    const nanoFilename = computer.querySelector<HTMLElement>('.nano-filename')!;
+    const nanoModified = computer.querySelector<HTMLElement>('.nano-modified')!;
+    const nanoStatus = computer.querySelector<HTMLElement>('.nano-status')!;
+    const nanoConfirm = computer.querySelector<HTMLElement>('.nano-confirm')!;
+    let editing: { path: string; content: string } | null = null;
+    const pageSize = 6;
+    let completionPage = 0;
+    let visibleOptions: Completion[] = [];
     let completionCycle: { options: Completion[]; index: number } | null = null;
     let suggestedValue = '';
     const close = computer.querySelector<HTMLButtonElement>('.computer-close');
@@ -110,18 +137,31 @@ const t = messages[locale];
       return editor!.selectionStart === editor!.value.length && editor!.selectionEnd === editor!.value.length;
     }
     function refreshSuggestions(reset = true) {
-      if (reset) completionCycle = null;
+      if (reset) {
+        completionCycle = null;
+        completionPage = 0;
+      }
       suggestedValue = atEnd() ? shell.suggest(editor!.value) : '';
       ghostPrefix.textContent = suggestedValue ? editor!.value : '';
       suggestion.textContent = suggestedValue.slice(editor!.value.length);
       const options = atEnd() ? completionCycle?.options ?? (editor!.value ? shell.complete(editor!.value) : []) : [];
+      visibleOptions = options;
+      const pageCount = Math.ceil(options.length / pageSize);
+      completionPage = Math.min(completionPage, Math.max(0, pageCount - 1));
+      pagination.hidden = pageCount <= 1;
+      previousPage.disabled = completionPage === 0;
+      nextPage.disabled = completionPage >= pageCount - 1;
+      pageStatus.textContent = pageCount > 1 ? `${completionPage + 1} / ${pageCount} · ${options.length} options` : '';
       completions.replaceChildren();
       completions.hidden = options.length === 0;
-      options.forEach((option, index) => {
+      const start = completionPage * pageSize;
+      options.slice(start, start + pageSize).forEach((option, offset) => {
+        const index = start + offset;
         const item = document.createElement('li');
         const button = document.createElement('button');
         button.type = 'button';
         button.textContent = option.label;
+        button.dataset.completionIndex = String(index);
         button.setAttribute('aria-pressed', String(completionCycle?.index === index));
         button.addEventListener('click', () => {
           editor!.value = option.value;
@@ -140,7 +180,7 @@ const t = messages[locale];
       const terminal = computer.querySelector<HTMLElement>('.terminal');
       if (terminal) terminal.scrollTop = terminal.scrollHeight;
     }
-    function submitLine() {
+    function appendCommand(valueText: string) {
       const line = document.createElement('div');
       line.className = 'terminal-line';
       const prompt = document.createElement('span');
@@ -149,9 +189,118 @@ const t = messages[locale];
       prompt.textContent = '$';
       const value = document.createElement('span');
       // Render commands and output as text, never HTML.
-      value.textContent = editor!.value;
+      value.textContent = valueText;
       line.append(prompt, value);
       transcript!.append(line);
+    }
+    function resetInput() {
+      editor!.value = '';
+      historyIndex = history.length;
+      draft = '';
+      refreshSuggestions();
+      updateInput();
+    }
+    function selectCompletion(options: Completion[], index: number) {
+      completionCycle = { options, index };
+      completionPage = Math.floor(index / pageSize);
+      editor!.value = options[index].value;
+      editor!.focus({ preventScroll: true });
+      editor!.setSelectionRange(editor!.value.length, editor!.value.length);
+      historyIndex = history.length;
+      refreshSuggestions(false);
+      updateInput();
+    }
+    function changeCompletionPage(direction: number) {
+      const pageCount = Math.ceil(visibleOptions.length / pageSize);
+      const page = Math.max(0, Math.min(pageCount - 1, completionPage + direction));
+      if (page === completionPage || !visibleOptions.length) return;
+      selectCompletion(visibleOptions, page * pageSize);
+    }
+    previousPage.addEventListener('click', () => changeCompletionPage(-1));
+    nextPage.addEventListener('click', () => changeCompletionPage(1));
+    function openNano(file: { path: string; content: string }) {
+      editing = file;
+      nanoInput.value = file.content;
+      nanoFilename.textContent = file.path;
+      nanoModified.textContent = '';
+      nanoStatus.textContent = 'Ctrl+O to save · Ctrl+X to exit · Saves last until page reload';
+      nanoConfirm.hidden = true;
+      nano.hidden = false;
+      terminal.dataset.editing = 'true';
+      terminal.scrollTop = 0;
+      nanoInput.focus({ preventScroll: true });
+      nanoInput.setSelectionRange(0, 0);
+    }
+    function closeNano() {
+      editing = null;
+      nano.hidden = true;
+      nanoConfirm.hidden = true;
+      delete terminal.dataset.editing;
+      editor!.focus({ preventScroll: true });
+      refreshSuggestions();
+      updateInput();
+    }
+    function saveNano() {
+      if (!editing) return false;
+      try {
+        shell.saveFile(editing.path, nanoInput.value);
+        editing.content = nanoInput.value;
+        nanoModified.textContent = '';
+        nanoStatus.textContent = `Saved ${nanoInput.value.split('\n').length} line(s) · Session only`;
+        return true;
+      } catch (error) {
+        nanoStatus.textContent = (error as Error).message;
+        return false;
+      }
+    }
+    function requestNanoExit() {
+      if (!editing) return;
+      if (nanoInput.value === editing.content) closeNano();
+      else {
+        nanoConfirm.hidden = false;
+        nanoConfirm.querySelector<HTMLButtonElement>('button')!.focus();
+      }
+    }
+    function cancelNanoExit() {
+      nanoConfirm.hidden = true;
+      nanoInput.focus({ preventScroll: true });
+    }
+    nanoInput.addEventListener('input', () => {
+      nanoModified.textContent = nanoInput.value !== editing?.content ? 'Modified' : '';
+    });
+    nano.addEventListener('click', event => {
+      const action = (event.target as Element).closest<HTMLElement>('[data-nano]')?.dataset.nano;
+      if (action === 'save') { saveNano(); nanoInput.focus({ preventScroll: true }); }
+      else if (action === 'exit') requestNanoExit();
+      else if (action === 'save-exit') { if (saveNano()) closeNano(); }
+      else if (action === 'discard') closeNano();
+      else if (action === 'cancel') cancelNanoExit();
+      else if (action === 'help') nanoStatus.textContent = 'Ctrl+O Save · Ctrl+X Exit · Ctrl+G Help · Tab inserts spaces · Files stay in this session';
+    });
+    nano.addEventListener('keydown', event => {
+      if (event.isComposing) return;
+      const key = event.key.toLowerCase();
+      if (event.ctrlKey && !event.altKey && !event.metaKey && ['o', 'x', 'g', 'c'].includes(key)) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (key === 'o') { saveNano(); nanoInput.focus({ preventScroll: true }); }
+        else if (key === 'x') requestNanoExit();
+        else if (key === 'c') cancelNanoExit();
+        else nanoStatus.textContent = 'Ctrl+O Save · Ctrl+X Exit · Ctrl+G Help · Tab inserts spaces · Files stay in this session';
+      } else if (!nanoConfirm.hidden && !event.ctrlKey && !event.altKey && !event.metaKey && ['y', 'n', 'escape'].includes(key)) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (key === 'y') { if (saveNano()) closeNano(); }
+        else if (key === 'n') closeNano();
+        else cancelNanoExit();
+      } else if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && event.target === nanoInput) {
+        event.preventDefault();
+        nanoInput.setRangeText('  ', nanoInput.selectionStart, nanoInput.selectionEnd, 'end');
+        nanoInput.dispatchEvent(new Event('input'));
+      }
+    });
+    function submitLine() {
+      appendCommand(editor!.value);
       const result = shell.execute(editor!.value);
       if (result.clear) {
         transcript!.replaceChildren();
@@ -166,12 +315,47 @@ const t = messages[locale];
         transcript!.append(output);
       }
       if (editor!.value) history.push(editor!.value);
-      editor!.value = '';
-      historyIndex = history.length;
-      draft = '';
+      resetInput();
+      if (result.edit) openNano(result.edit);
+    }
+    function confirmOrSubmit() {
+      if (!completionCycle) {
+        submitLine();
+        return;
+      }
+      // Tab/arrow navigation already filled the selected value. Accept it
+      // without adding transcript output or executing the command.
       refreshSuggestions();
+      completions.hidden = true;
+      pagination.hidden = true;
       updateInput();
     }
+    // Also cancel while focus is on a completion option. Cancelled input is
+    // displayed, but never executed or added to command history.
+    dialog.addEventListener('keydown', event => {
+      if (editing) return;
+      if ((event.key === 'PageUp' || event.key === 'PageDown') && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && !pagination.hidden) {
+        event.preventDefault();
+        changeCompletionPage(event.key === 'PageUp' ? -1 : 1);
+      }
+      if (event.ctrlKey && !event.altKey && !event.metaKey && event.key.toLowerCase() === 'c') {
+        event.preventDefault();
+        appendCommand(`${editor!.value}^C`);
+        resetInput();
+        editor!.focus({ preventScroll: true });
+      }
+    });
+    completions.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key) || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
+      const target = event.target as HTMLElement;
+      if (!target.matches('button[data-completion-index]')) return;
+      const current = Number(target.dataset.completionIndex);
+      const options = visibleOptions;
+      if (!options.length) return;
+      event.preventDefault();
+      const direction = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+      selectCompletion(options, (current + direction + options.length) % options.length);
+    });
     editor.addEventListener('keydown', event => {
       if (event.isComposing || event.key === 'Process') return;
       if (event.key === 'Tab' && !event.ctrlKey && !event.altKey && !event.metaKey && atEnd()) {
@@ -181,12 +365,16 @@ const t = messages[locale];
         const index = completionCycle
           ? (completionCycle.index + (event.shiftKey ? -1 : 1) + options.length) % options.length
           : event.shiftKey ? options.length - 1 : 0;
-        completionCycle = { options, index };
-        editor.value = options[index].value;
-        editor.setSelectionRange(editor.value.length, editor.value.length);
-        historyIndex = history.length;
-        refreshSuggestions(false);
-        updateInput();
+        selectCompletion(options, index);
+      } else if (!event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && atEnd()
+        && ((completionCycle && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key))
+          || (event.key === 'ArrowDown' && !completions.hidden))) {
+        const options = completionCycle?.options ?? shell.complete(editor.value);
+        if (!options.length) return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+        const index = completionCycle ? (completionCycle.index + direction + options.length) % options.length : 0;
+        selectCompletion(options, index);
       } else if (event.key === 'ArrowRight' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && atEnd() && suggestedValue) {
         event.preventDefault();
         editor.value = suggestedValue;
@@ -196,7 +384,7 @@ const t = messages[locale];
         updateInput();
       } else if (event.key === 'Enter') {
         event.preventDefault();
-        submitLine();
+        confirmOrSubmit();
       } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
         event.preventDefault();
         if (historyIndex === history.length) draft = editor.value;
@@ -211,7 +399,7 @@ const t = messages[locale];
     editor.addEventListener('beforeinput', event => {
       if (!event.isComposing && (event.inputType === 'insertLineBreak' || event.inputType === 'insertParagraph')) {
         event.preventDefault();
-        submitLine();
+        confirmOrSubmit();
       }
     });
     editor.addEventListener('input', event => {
@@ -229,13 +417,30 @@ const t = messages[locale];
       ghostPrefix.textContent = '';
       suggestion.textContent = '';
       completions.hidden = true;
+      pagination.hidden = true;
     });
     editor.addEventListener('compositionend', () => {
       refreshSuggestions();
       updateInput();
     });
     editor.addEventListener('keyup', event => {
-      if (['ArrowLeft', 'Home', 'End', 'ArrowRight'].includes(event.key)) refreshSuggestions();
+      if (['ArrowLeft', 'Home', 'End', 'ArrowRight'].includes(event.key)) {
+        refreshSuggestions(!(completionCycle && atEnd() && ['ArrowLeft', 'ArrowRight'].includes(event.key)));
+      }
+    });
+    dialog.addEventListener('click', event => {
+      if (!dialog.open || closing) return;
+      const target = event.target;
+      if (!(target instanceof Element) || target.closest('button, a, input, textarea, select, [contenteditable]')) return;
+      // Keep dragging to select terminal output available for copying.
+      if (window.getSelection()?.isCollapsed === false) return;
+      if (editing) {
+        if (!nanoConfirm.hidden) return;
+        nanoInput.focus({ preventScroll: true });
+      } else {
+        editor.focus({ preventScroll: true });
+        refreshSuggestions(false);
+      }
     });
     activate.hidden = false;
     activate.addEventListener('click', () => {
@@ -269,7 +474,7 @@ const t = messages[locale];
         {fontSize: getComputedStyle(text).fontSize, lineHeight: getComputedStyle(text).lineHeight},
         true, 'transparent',
       );
-      editor.focus({ preventScroll: true });
+      (editing ? nanoInput : editor).focus({ preventScroll: true });
     });
     async function dismiss() {
       if (closing || !dialog!.open) return;

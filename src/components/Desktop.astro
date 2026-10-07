@@ -330,6 +330,11 @@ const t = messages[locale];
       pagination.hidden = true;
       updateInput();
     }
+    // Reserve Tab throughout fullscreen, including buttons, unmatched input,
+    // and Nano. Target handlers still perform completion or insert spaces.
+    dialog.addEventListener('keydown', event => {
+      if (dialog.open && event.key === 'Tab') event.preventDefault();
+    }, { capture: true });
     // Also cancel while focus is on a completion option. Cancelled input is
     // displayed, but never executed or added to command history.
     dialog.addEventListener('keydown', event => {

@@ -64,5 +64,10 @@
 .computer-dialog .screen-status{padding:10px 18px;font-size:11px}
 .computer-dialog .monitor-footer,.computer-dialog .monitor-neck,.computer-dialog .monitor-base,.computer-dialog .keyboard{display:none}
 @media(max-width:700px){.desktop-art{height:395px}.floppy{bottom:35px}.header-tools{min-width:84px}}
+/* Opt in to native transitions between pages when motion is welcome. */
+@media(prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:180ms}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#172620;--panel:#20332a;--ink:#f2efe4;--muted:#bac6b8;--line:#526458;--accent:#a6d6b7;--accent-ink:#172620;--wash:#2a4035;--shadow:#0d1712}}

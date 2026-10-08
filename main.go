@@ -1,380 +1,230 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"html/template"
-	"io"
-	"io/fs"
+	"compress/gzip"
+	"context"
+	"errors"
+	"log"
 	"net/http"
 	"os"
-	"reflect"
-	"slices"
+	"os/signal"
+	"path"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ikeikeikeike/go-sitemap-generator/v2/stm"
-	"github.com/joho/godotenv"
 )
 
-func main() {
-
-	gin.SetMode(gin.DebugMode)
-
-	r := gin.Default()
-
-	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
-		"T": func(key string) string {
-			return ""
-		},
-	}).ParseGlob("templates/*"))
-
-	r.SetHTMLTemplate(tmpl)
-
-	r.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "error", gin.H{
-			"error": "Page not found",
-			"Title": "Error - 404",
-		})
-
-		go postWebhook(WebHookRequest{
-			Embeds: []WebHookEmbed{
-				{
-					Title:       "A lost lamb",
-					Description: "Someone got lost at " + c.Request.URL.Path,
-					Color:       "1561516",
-				},
-			},
-		})
-	})
-
-	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
-		c.HTML(http.StatusInternalServerError, "error", gin.H{
-			"error": err,
-			"Title": "Error - 500",
-		})
-		color, colorErr := strconv.ParseInt("c70417", 16, 64)
-		if colorErr != nil {
-			color = 16753920
-		}
-		go postWebhook(WebHookRequest{
-			Embeds: []WebHookEmbed{
-				{
-					Title:       "Someone broke something",
-					Description: fmt.Sprintf("Some rascal broke something and it resulted in %v", err),
-					Color:       strconv.FormatInt(color, 10),
-				},
-			},
-		})
-	}))
-
-	r.GET("/", func(c *gin.Context) {
-		lang, isLanguageSet := c.GetQuery("lang")
-		if !isLanguageSet {
-			lang = ""
-		}
-		handleIndex(c, lang)
-	})
-
-	r.GET("/assets/*filepath", func(c *gin.Context) {
-		c.Header("Cache-Control", "max-age=86400")
-		filePath := strings.TrimPrefix(c.Param("filepath"), "/")
-		finfo, err := fs.Stat(os.DirFS("./assets"), filePath)
-		fmt.Println(err)
-		if err != nil {
-			c.Status(http.StatusNotFound)
-			go postWebhook(WebHookRequest{
-				Embeds: []WebHookEmbed{
-					{
-						Title:       "A little thief",
-						Description: "Someone tried to sneek away with some files from: " + c.Request.URL.Path,
-						Color:       "7016727",
-					},
-				},
-			})
-			return
-		}
-		if finfo.IsDir() {
-			c.Status(http.StatusNotFound)
-			go postWebhook(WebHookRequest{
-				Embeds: []WebHookEmbed{
-					{
-						Title:       "A little thief",
-						Description: "Someone tried to sneek away with some files from: " + c.Request.URL.Path,
-						Color:       "7016727",
-					},
-				},
-			})
-			return
-		}
-		c.File("./assets/" + c.Param("filepath"))
-	})
-
-	r.GET("/sitemap.xml", renderSitemap)
-
-	r.GET("/robots.txt", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK,
-			`User-agent: GPTBot
-Disallow: /
-User-agent: OAI-SearchBot
-Disallow: /
-User-agent: ChatGPT-User
-Disallow: /
-User-agent: Google-Extended
-Disallow: /
-User-agent: ClaudeBot
-Disallow: /
-User-agent: anthropic-ai
-Disallow: /
-User-agent: PerplexityBot
-Disallow: /
-User-agent: Perplexity-User
-Disallow: /
-User-agent: CCBot
-Disallow: /
-User-agent: Bytespider
-Disallow: /
-User-agent: Amazonbot
-Disallow: /
-User-agent: Applebot-Extended
-Disallow: /
-User-agent: Meta-ExternalAgent
-Disallow: /
-User-agent: cohere-ai
-Disallow: /
-User-agent: archive.org_bot
-Disallow: 
-User-agent: *
-Disallow: 
-Disallow: /cgi-bin/
-Sitemap: https://wlczak.net/sitemap.xml`)
-	})
-
-	// Listen and Server in 0.0.0.0:8080
-	err := r.Run(":8080")
-
-	if err != nil {
-		fmt.Println(err)
-	}
+type compressedResponse struct {
+	http.ResponseWriter
+	writer *gzip.Writer
 }
 
-func handleIndex(c *gin.Context, lang string) {
-	languages := getLanguages()
-	var languageCodes []string
-	for _, l := range languages {
-		languageCodes = append(languageCodes, l.Code)
-	}
-	if lang == "" || !slices.Contains(languageCodes, lang) {
-		lang = chooseLanguageBasedOnHeader(c.Request.Header.Get("Accept-Language"), languageCodes)
-		if lang == "" {
-			lang = "En"
+func (w compressedResponse) WriteHeader(code int) {
+	w.Header().Del("Content-Length")
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w compressedResponse) Write(data []byte) (int, error) {
+	return w.writer.Write(data)
+}
+
+func acceptsGzip(header string) bool {
+	for _, encoding := range strings.Split(header, ",") {
+		parts := strings.Split(encoding, ";")
+		if strings.TrimSpace(parts[0]) != "gzip" {
+			continue
 		}
-	}
-
-	if !strings.HasPrefix(c.Request.UserAgent(), "Uptime-Kuma/") {
-		cookies := c.Request.CookiesNamed("lastvisited")
-
-		c.SetCookie("lastvisited", strconv.FormatInt(time.Now().UnixMilli(), 10), 86400, "/", "", false, false)
-		if len(cookies) == 0 {
-			go ping(true, time.Now())
-		} else {
-			cookie := cookies[0]
-			timeStr := cookie.Value
-			timeInt, err := strconv.ParseInt(timeStr, 10, 64)
-			if err != nil {
-				go ping(false, time.UnixMilli(0))
-				return
+		quality := 1.0
+		for _, parameter := range parts[1:] {
+			if value, ok := strings.CutPrefix(strings.TrimSpace(parameter), "q="); ok {
+				parsed, err := strconv.ParseFloat(value, 64)
+				if err != nil {
+					return false
+				}
+				quality = parsed
 			}
-			timeObj := time.UnixMilli(timeInt)
-			go ping(false, timeObj)
 		}
+		return quality > 0 && quality <= 1
 	}
-
-	projects := getProjects()
-
-	translations := getTranslations()
-
-	T := makeTranslator(lang, translations)
-
-	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
-		"T": T, // placeholder
-	}).ParseGlob("templates/*"))
-
-	var indexTemplate bytes.Buffer
-	err := tmpl.ExecuteTemplate(&indexTemplate, "index", gin.H{
-		"Year":             time.Now().Year(),
-		"Projects":         projects,
-		"Languages":        languages,
-		"SelectedLanguage": lang,
-	})
-	if err != nil {
-		fmt.Println(err)
-		panic("failed to execute template")
-	}
-	body, _ := io.ReadAll(&indexTemplate)
-	c.Data(http.StatusOK, "text/html", body)
-	// c.HTML(http.StatusOK, "index", gin.H{
-	// "Year": time.Now().Year(),
-	// "Title": map[string]string{
-	// "En": "My Projects",
-	// "Cs": "Mé projekty",
-	// "Jp": "僕のプロジェクト",
-	// },
-	// "Projects":         projects,
-	// "Languages":        languages,
-	// "SelectedLanguage": lang,
-	// "T":                T,
-	// })
-
+	return false
 }
 
-func makeTranslator(lang string, dict map[string]MultiLangString) func(any) string {
-	return func(input any) string {
-		reflectInput := reflect.ValueOf(input)
-		if reflectInput.Kind() == reflect.String {
-			key := reflectInput.String()
-			if v, ok := dict[key]; ok {
-				if t, ok := getStructField(v, lang); ok {
-					if t != "" {
-						return t
+// Serve only public build files. os.Root prevents symlinks escaping SITE_DIR.
+func newRouter(siteDir string) (*gin.Engine, error) {
+	root, err := os.OpenRoot(siteDir)
+	if err != nil {
+		return nil, err
+	}
+	root.Close()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.Use(gin.Logger(), gin.Recovery(), func(c *gin.Context) {
+		c.Header("X-Content-Type-Options", "nosniff")
+		c.Header("Referrer-Policy", "strict-origin-when-cross-origin")
+		c.Next()
+		// Finish empty 404s before Gin adds its default text response.
+		if c.Writer.Status() == http.StatusNotFound && !c.Writer.Written() {
+			c.Writer.WriteHeaderNow()
+		}
+	})
+	r.GET("/api/health", func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+	r.NoRoute(func(c *gin.Context) {
+		if c.Request.Method != http.MethodGet && c.Request.Method != http.MethodHead {
+			c.Header("Allow", "GET, HEAD")
+			c.Status(http.StatusMethodNotAllowed)
+			return
+		}
+		if c.Request.URL.Path == "/" && c.Request.URL.Query().Has("lang") {
+			target := "/"
+			switch strings.ToLower(c.Query("lang")) {
+			case "cs":
+				target = "/cs/"
+			case "ja":
+				target = "/ja/"
+			}
+			query := c.Request.URL.Query()
+			query.Del("lang")
+			if len(query) > 0 {
+				target += "?" + query.Encode()
+			}
+			c.Redirect(http.StatusMovedPermanently, target)
+			return
+		}
+		clean := path.Clean(c.Request.URL.Path)
+		if clean != strings.TrimSuffix(c.Request.URL.Path, "/") && c.Request.URL.Path != "/" {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		if clean == "/api" || strings.HasPrefix(clean, "/api/") {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		site, err := os.OpenRoot(siteDir)
+		if err != nil {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+		defer site.Close()
+		name := strings.TrimPrefix(clean, "/")
+		missing := false
+		if name == "" {
+			name = "."
+		}
+		file, err := site.Open(name)
+		if err == nil {
+			info, statErr := file.Stat()
+			if statErr == nil && info.IsDir() {
+				file.Close()
+				name = path.Join(name, "index.html")
+				file, err = site.Open(name)
+				if err == nil && !strings.HasSuffix(c.Request.URL.Path, "/") {
+					file.Close()
+					target := c.Request.URL.Path + "/"
+					if c.Request.URL.RawQuery != "" {
+						target += "?" + c.Request.URL.RawQuery
 					}
-					return key
+					c.Redirect(http.StatusMovedPermanently, target)
+					return
 				}
 			}
-			return key // fallback
 		}
-		if reflectInput.Kind() == reflect.Struct {
-			if v, ok := getStructField(input, lang); ok {
-				return v
-			}
-			return ""
-		}
-		return ""
-	}
-}
-
-func getStructField(v any, field string) (string, bool) {
-	rv := reflect.ValueOf(v)
-
-	// must be struct
-	if rv.Kind() == reflect.Struct {
-		f := rv.FieldByName(field)
-		if f.IsValid() && f.Kind() == reflect.String {
-			return f.String(), true
-		}
-	}
-	return "", false
-}
-
-func renderSitemap(c *gin.Context) {
-	stmap := stm.NewSitemap(1)
-	stmap.Create()
-	stmap.SetDefaultHost("https://wlczak.net/")
-	stmap.Add(stm.URL{
-		{"loc", "/"},
-		{"priority", "1.0"},
-		{"changefreq", "monthly"},
-	})
-
-	xml := stmap.XMLContent()
-	c.Header("Content-Type", "application/xml")
-	c.String(http.StatusOK, string(xml))
-	go postWebhook(WebHookRequest{
-		Embeds: []WebHookEmbed{
-			{
-				Title:       "Sitemap generated",
-				Description: "Someone requested sitemap.xml",
-				Color:       "1561516",
-			},
-		},
-	})
-}
-
-type WebHookRequest struct {
-	Embeds  []WebHookEmbed `json:"embeds"`
-	Content string         `json:"content"`
-}
-type WebHookEmbed struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Color       string `json:"color"`
-}
-
-func ping(new bool, t time.Time) {
-	var request WebHookRequest
-
-	if new {
-		request.Embeds = []WebHookEmbed{
-			{
-				Title:       "New User",
-				Description: "New user visited at " + t.Format("15:04:05"),
-				Color:       "16753920",
-			},
-		}
-		go postWebhook(request)
-	} else {
-		tDiff := time.Since(t)
-		var timeString string
-		if tDiff.Hours() > 24 {
-			timeString = fmt.Sprintf("%d days %d hours %d minutes %d seconds", int(tDiff.Hours()/24), int(tDiff.Hours())%24, int(tDiff.Minutes())%60, int(tDiff.Seconds())%60)
-		} else if tDiff.Hours() > 1 {
-			timeString = fmt.Sprintf("%d hours %d minutes %d seconds", int(tDiff.Hours()), int(tDiff.Minutes())%60, int(tDiff.Seconds())%60)
-		} else if tDiff.Minutes() > 1 {
-			timeString = fmt.Sprintf("%d minutes %d seconds", int(tDiff.Minutes()), int(tDiff.Seconds())%60)
-		} else {
-			timeString = fmt.Sprintf("%d seconds", int(tDiff.Seconds()))
-		}
-		request = WebHookRequest{
-			Embeds: []WebHookEmbed{
-				{
-					Title:       "Revisit",
-					Description: fmt.Sprintf("User revisited after %s", timeString),
-					Color:       "5814783",
-				},
-			},
-			// Content: fmt.Sprintf("User revisited after %s", timeString),
-		}
-		postWebhook(request)
-	}
-
-}
-
-func postWebhook(request WebHookRequest) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		err := godotenv.Load("./conf/.env")
-
 		if err != nil {
-			fmt.Println(err)
+			// Missing assets never fall back to HTML.
+			if path.Ext(clean) != "" {
+				c.Status(http.StatusNotFound)
+				return
+			}
+			locale := ""
+			for _, prefix := range []string{"cs", "ja"} {
+				if clean == "/"+prefix || strings.HasPrefix(clean, "/"+prefix+"/") {
+					locale = prefix
+				}
+			}
+			errorPage := "404.html"
+			if locale != "" {
+				errorPage = path.Join(locale, "404", "index.html")
+			}
+			file, err = site.Open(errorPage)
+			if err != nil {
+				c.Status(http.StatusNotFound)
+				return
+			}
+			c.Status(http.StatusNotFound)
+			missing = true
 		}
-	}
-
-	json, err := json.Marshal(request)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	body := bytes.NewReader(json)
-	_, err = http.Post(os.Getenv("DISCORD_WEBHOOK"), "application/json", body)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
-func chooseLanguageBasedOnHeader(header string, languageCodes []string) string {
-	languagePriorityPairs := strings.Split(header, ",")
-
-	for _, l := range languagePriorityPairs {
-		language := strings.Split(l, ";")
-		for _, lc := range languageCodes {
-			if strings.ToLower(lc) == language[0] {
-				return lc
+		defer file.Close()
+		info, err := file.Stat()
+		if err != nil || !info.Mode().IsRegular() {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		c.Header("Cache-Control", "public, max-age=0, must-revalidate")
+		if strings.HasPrefix(name, "_astro/") {
+			c.Header("Cache-Control", "public, max-age=31536000, immutable")
+		}
+		// Prerendered routes lose Astro's response headers. Set XML explicitly
+		// so ServeContent cannot fall back to text/plain via MIME sniffing.
+		if path.Ext(name) == ".xml" {
+			c.Header("Content-Type", "application/xml; charset=utf-8")
+		}
+		if missing {
+			c.Header("Content-Type", "text/html; charset=utf-8")
+			c.Header("Cache-Control", "no-store")
+			c.Writer.WriteHeaderNow()
+		}
+		// Compress text, preserving identity representations for range requests.
+		switch path.Ext(name) {
+		case ".html", ".css", ".js", ".svg", ".xml", ".txt", ".json":
+			c.Header("Vary", "Accept-Encoding")
+			if !missing && c.Request.Method == http.MethodGet && c.GetHeader("Range") == "" && acceptsGzip(c.GetHeader("Accept-Encoding")) {
+				c.Header("Content-Encoding", "gzip")
+				writer := gzip.NewWriter(c.Writer)
+				defer func() {
+					if c.Writer.Status() != http.StatusNotModified && c.Writer.Status() != http.StatusNoContent {
+						writer.Close()
+					}
+				}()
+				http.ServeContent(compressedResponse{ResponseWriter: c.Writer, writer: writer}, c.Request, name, info.ModTime(), file)
+				return
 			}
 		}
-	}
+		http.ServeContent(c.Writer, c.Request, name, info.ModTime(), file)
+	})
+	return r, nil
+}
 
-	return "En"
+func main() {
+	siteDir := os.Getenv("SITE_DIR")
+	if siteDir == "" {
+		siteDir = "dist"
+	}
+	router, err := newRouter(siteDir)
+	if err != nil {
+		log.Fatalf("open static site: %v (run npm run build first)", err)
+	}
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	server := &http.Server{Addr: ":" + port, Handler: router, ReadHeaderTimeout: 5 * time.Second}
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	go func() {
+		log.Printf("serving %s on http://localhost:%s", siteDir, port)
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+	<-ctx.Done()
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Printf("shutdown: %v", err)
+	}
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "en",
+    "intro": "Junior backend developer. Curious by default.",
+    "bio": "I'm Adam Vlček, a developer based in Pilsen, Czechia. I mostly build backends for web applications, but I also enjoy embedded systems for their straightforward, hands-on nature.",
+    "learning": "PHP and Go are my usual starting points for personal projects. I also work with Java and enjoy trying other languages. Rust and Kotlin for native Android development are on my learning list."
+  },
+  {
+    "id": "cs",
+    "intro": "Junior backend vývojář. Zvědavost jako výchozí nastavení.",
+    "bio": "Jsem Adam Vlček, vývojář z Plzně. Nejčastěji tvořím backendy webových aplikací. Baví mě také embedded systémy a přímá práce s hardwarem.",
+    "learning": "Ve svých projektech nejčastěji používám PHP a Go. Pracuji také s Javou a rád zkouším další jazyky. Na seznamu toho, co se chci naučit, mám Rust a Kotlin pro nativní Android aplikace."
+  },
+  {
+    "id": "ja",
+    "intro": "ジュニアバックエンドエンジニア。好奇心を原動力に。",
+    "bio": "Adam Vlčekです。チェコのピルゼンを拠点に活動しています。主にウェブアプリのバックエンドを作っていますが、ハードウェアを直接扱う組み込みシステムにも興味があります。",
+    "learning": "個人プロジェクトでは主にPHPとGoを使います。Javaも使い、ほかの言語を試すのも好きです。これから学びたいのはRustと、ネイティブAndroid開発向けのKotlinです。"
+  }
+]

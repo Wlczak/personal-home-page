@@ -335,10 +335,25 @@ const t = messages[locale];
     dialog.addEventListener('keydown', event => {
       if (dialog.open && event.key === 'Tab') event.preventDefault();
     }, { capture: true });
-    // Also cancel while focus is on a completion option. Cancelled input is
-    // displayed, but never executed or added to command history.
+    // Handle shell shortcuts even while focus is on a completion option.
     dialog.addEventListener('keydown', event => {
       if (editing) return;
+      if (event.ctrlKey && !event.altKey && !event.metaKey && event.key.toLowerCase() === 'd') {
+        event.preventDefault();
+        if (!editor!.value) {
+          void dismiss();
+        } else {
+          // Readline treats Ctrl+D as forward delete until the prompt is empty.
+          const start = editor!.selectionStart;
+          const end = Math.max(editor!.selectionEnd, start + 1);
+          editor!.setRangeText('', start, Math.min(end, editor!.value.length), 'start');
+          historyIndex = history.length;
+          refreshSuggestions();
+          updateInput();
+          editor!.focus({ preventScroll: true });
+        }
+        return;
+      }
       if ((event.key === 'PageUp' || event.key === 'PageDown') && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && !pagination.hidden) {
         event.preventDefault();
         changeCompletionPage(event.key === 'PageUp' ? -1 : 1);
